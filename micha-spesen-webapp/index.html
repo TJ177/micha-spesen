@@ -1,0 +1,605 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Micha Spesen</title>
+  <meta name="theme-color" content="#111827" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <style>
+    :root{
+      --bg:#f3f4f6; --card:#ffffff; --text:#111827; --muted:#6b7280; --line:#d1d5db;
+      --accent:#111827; --ok:#16a34a; --warn:#dc2626;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+    .wrap{max-width:1180px;margin:0 auto;padding:20px}
+    .hero,.card{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+    .hero{padding:24px;margin-bottom:18px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .card{padding:20px}
+    h1{margin:0 0 8px;font-size:32px}
+    h2{margin:0 0 16px;font-size:22px}
+    .muted{color:var(--muted)}
+    label{display:block;margin:10px 0 6px;font-weight:700}
+    input,select,button{
+      width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--line);font-size:15px
+    }
+    button{cursor:pointer;background:#111827;color:white;border:none;font-weight:700}
+    button.secondary{background:#e5e7eb;color:#111827}
+    button.outline{background:white;color:#111827;border:1px solid var(--line)}
+    .row{display:flex;gap:10px;align-items:center}
+    .row > *{flex:1}
+    .stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+    .stat{border:1px solid var(--line);border-radius:16px;padding:14px}
+    .stat .label{font-size:13px;color:var(--muted)}
+    .stat .value{font-size:28px;font-weight:700;margin-top:8px}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    .toolbar button{width:auto}
+    .list{display:flex;flex-direction:column;gap:12px;max-height:520px;overflow:auto}
+    .trip{border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;justify-content:space-between;gap:12px}
+    .trip-title{font-weight:700}
+    .small{font-size:14px;color:var(--muted);margin-top:4px}
+    .status{padding:10px 12px;border-radius:14px;margin-top:10px;font-size:14px}
+    .status.ok{background:#ecfdf5;color:#166534;border:1px solid #bbf7d0}
+    .status.warn{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
+    .login-grid{display:grid;grid-template-columns:1fr 1fr auto auto;gap:10px}
+    .danger{background:white;color:#111827;border:1px solid var(--line)}
+    .pill{display:inline-block;padding:4px 8px;border-radius:999px;background:#f3f4f6;font-size:12px}
+    @media (max-width: 960px){
+      .grid{grid-template-columns:1fr}
+      .trip{flex-direction:column}
+      .login-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <h1>Micha Spesen</h1>
+      <div class="muted">Synchronisierte Web-App für Handy und PC. Gleiche Daten auf beiden Geräten.</div>
+      <div class="muted" style="margin-top:8px;">Regel: unter 8 Stunden = 0 €, ab 8 bis unter 24 Stunden = 14 €, pro volle 24 Stunden = 28 €, Rest ab 8 Stunden zusätzlich = 14 €.</div>
+      <div id="syncStatus" class="status warn" style="display:none;"></div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Anmeldung</h2>
+        <div class="login-grid">
+          <input id="email" type="email" placeholder="E-Mail" autocomplete="username">
+          <input id="password" type="password" placeholder="Passwort" autocomplete="current-password">
+          <button type="button" onclick="signIn()">Anmelden</button>
+          <button type="button" class="outline" onclick="signUp()">Registrieren</button>
+        </div>
+        <div class="toolbar">
+          <button type="button" class="outline" onclick="signOutUser()">Abmelden</button>
+        </div>
+        <div class="small">Einmal registrieren, danach mit denselben Daten auf Handy und PC anmelden.</div>
+        <div id="authStatus" class="status warn">Noch nicht angemeldet.</div>
+      </div>
+
+      <div class="card">
+        <h2>Monatsübersicht</h2>
+
+        <label for="monthSelect">Monat auswählen</label>
+        <select id="monthSelect"></select>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="label">Gesamtsumme im Monat</div>
+            <div class="value" id="monthlyTotal">0.00 €</div>
+          </div>
+          <div class="stat">
+            <div class="label">Gesamtzeit im Monat</div>
+            <div class="value" id="monthlyHours">0 Std 0 Min</div>
+          </div>
+        </div>
+
+        <div class="stat" style="margin-top:12px;">
+          <div class="label">Gesamte gespeicherte Spesen</div>
+          <div class="value" id="overallTotal">0.00 €</div>
+        </div>
+
+        <div class="toolbar">
+          <button type="button" class="outline" onclick="exportCSV()">Liste exportieren</button>
+          <button type="button" onclick="exportPDF()">Als PDF exportieren</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid" style="margin-top:18px;">
+      <div class="card">
+        <h2>Fahrt erfassen</h2>
+
+        <label for="tourName">Tour / Bemerkung</label>
+        <input id="tourName" placeholder="z. B. Berlin Tour">
+
+        <label for="startTime">Losgefahren</label>
+        <div class="row">
+          <input id="startTime" type="datetime-local">
+          <button type="button" onclick="setNow('startTime')">Jetzt</button>
+        </div>
+
+        <label for="endTime">Angekommen</label>
+        <div class="row">
+          <input id="endTime" type="datetime-local">
+          <button type="button" class="secondary" onclick="setNow('endTime')">Jetzt</button>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="label">Dauer</div>
+            <div class="value" id="durationPreview">0 Std 0 Min</div>
+          </div>
+          <div class="stat">
+            <div class="label">Spesen</div>
+            <div class="value" id="allowancePreview">0.00 €</div>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <button type="button" onclick="saveTrip()">Fahrt speichern</button>
+          <button type="button" class="outline" onclick="clearForm()">Felder leeren</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Hinweis fürs Handy</h2>
+        <div class="small">Auf Android in Chrome: Menü öffnen → <span class="pill">Zum Startbildschirm hinzufügen</span>.</div>
+        <div class="small" style="margin-top:8px;">Auf iPhone in Safari: Teilen → <span class="pill">Zum Home-Bildschirm</span>.</div>
+        <div class="small" style="margin-top:8px;">Dann hat Micha ein Icon auf dem Handy. Das ist keine Store-App, fühlt sich im Alltag aber fast so an.</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:18px;">
+      <h2>Fahrten im ausgewählten Monat</h2>
+      <div id="tripList" class="list"></div>
+    </div>
+  </div>
+
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js';
+  import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged
+  } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js';
+  import {
+    getFirestore,
+    collection,
+    query,
+    orderBy,
+    onSnapshot,
+    addDoc,
+    updateDoc,
+    deleteDoc,
+    doc,
+    serverTimestamp
+  } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js';
+
+  // HIER EINTRAGEN: Firebase-Konfiguration aus der Firebase Console
+  const firebaseConfig = {
+    apiKey: "HIER_API_KEY",
+    authDomain: "HIER_AUTH_DOMAIN",
+    projectId: "HIER_PROJECT_ID",
+    storageBucket: "HIER_STORAGE_BUCKET",
+    messagingSenderId: "HIER_MESSAGING_SENDER_ID",
+    appId: "HIER_APP_ID"
+  };
+
+  const isConfigured = !Object.values(firebaseConfig).some(v => String(v).startsWith("HIER_"));
+
+  const syncStatus = document.getElementById("syncStatus");
+  const authStatus = document.getElementById("authStatus");
+  const monthSelect = document.getElementById("monthSelect");
+
+  let app = null;
+  let auth = null;
+  let db = null;
+  let currentUser = null;
+  let trips = [];
+  let unsubscribeTrips = null;
+
+  if (!isConfigured) {
+    syncStatus.style.display = "block";
+    syncStatus.className = "status warn";
+    syncStatus.textContent = "Firebase ist noch nicht eingetragen. Erst die Werte in index.html einsetzen, dann klappt die Synchronisation.";
+  } else {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+
+    onAuthStateChanged(auth, (user) => {
+      currentUser = user || null;
+      if (user) {
+        authStatus.className = "status ok";
+        authStatus.textContent = `Angemeldet als ${user.email}`;
+        syncStatus.style.display = "block";
+        syncStatus.className = "status ok";
+        syncStatus.textContent = "Synchronisation aktiv.";
+        subscribeTrips();
+      } else {
+        authStatus.className = "status warn";
+        authStatus.textContent = "Noch nicht angemeldet.";
+        syncStatus.style.display = "block";
+        syncStatus.className = "status warn";
+        syncStatus.textContent = "Nicht synchronisiert. Bitte anmelden.";
+        trips = [];
+        if (unsubscribeTrips) unsubscribeTrips();
+        unsubscribeTrips = null;
+        render();
+      }
+    });
+  }
+
+  window.signUp = async function signUp() {
+    if (!auth) return alert("Firebase-Konfiguration fehlt.");
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    if (!email || !password) return alert("Bitte E-Mail und Passwort eingeben.");
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+    } catch (e) {
+      alert("Registrierung fehlgeschlagen: " + e.message);
+    }
+  }
+
+  window.signIn = async function signIn() {
+    if (!auth) return alert("Firebase-Konfiguration fehlt.");
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    if (!email || !password) return alert("Bitte E-Mail und Passwort eingeben.");
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (e) {
+      alert("Anmeldung fehlgeschlagen: " + e.message);
+    }
+  }
+
+  window.signOutUser = async function signOutUser() {
+    if (!auth) return;
+    await signOut(auth);
+  }
+
+  function subscribeTrips() {
+    if (!currentUser || !db) return;
+    if (unsubscribeTrips) unsubscribeTrips();
+
+    const tripsRef = collection(db, "users", currentUser.uid, "trips");
+    const q = query(tripsRef, orderBy("startTime", "desc"));
+
+    unsubscribeTrips = onSnapshot(q, (snapshot) => {
+      trips = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      render();
+    }, (error) => {
+      syncStatus.style.display = "block";
+      syncStatus.className = "status warn";
+      syncStatus.textContent = "Fehler bei der Synchronisation: " + error.message;
+    });
+  }
+
+  function formatDateTimeLocal(date) {
+    const pad = (n) => String(n).padStart(2, "0");
+    return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  }
+  function formatGermanDate(dateString) {
+    if (!dateString) return "-";
+    const d = new Date(dateString);
+    return d.toLocaleString("de-DE", {day:"2-digit", month:"2-digit", year:"numeric", hour:"2-digit", minute:"2-digit"});
+  }
+  function formatMonthKey(dateString) {
+    const d = new Date(dateString);
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
+  }
+  function formatMonthLabel(monthKey) {
+    if (!monthKey) return "Kein Monat";
+    const [year, month] = monthKey.split("-");
+    const d = new Date(Number(year), Number(month)-1, 1);
+    return d.toLocaleDateString("de-DE", {month:"long", year:"numeric"});
+  }
+  function calculateDurationHours(start, end) {
+    const diffMs = new Date(end) - new Date(start);
+    if (Number.isNaN(diffMs) || diffMs <= 0) return 0;
+    return diffMs / (1000 * 60 * 60);
+  }
+  function calculateAllowance(hours) {
+    if (hours < 8) return 0;
+    const fullDays = Math.floor(hours / 24);
+    const remainingHours = hours % 24;
+    let total = fullDays * 28;
+    if (remainingHours >= 8) total += 14;
+    return total;
+  }
+  function getAllowanceType(amount) {
+    if (amount === 0) return "0 €";
+    if (amount === 14) return "14 €";
+    if (amount === 28) return "28 €";
+    if (amount % 28 === 0) return `${amount} € (24h-Blöcke)`;
+    if (amount > 28) return `${amount} € (24h + Rest)`;
+    return `${amount} €`;
+  }
+  function formatDuration(hours) {
+    const totalMinutes = Math.round(hours * 60);
+    const h = Math.floor(totalMinutes / 60);
+    const m = totalMinutes % 60;
+    return `${h} Std ${m} Min`;
+  }
+  function downloadFile(content, filename, type) {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+  function selectedMonth() {
+    return monthSelect.value;
+  }
+  function getNextTripNumber() {
+    if (!trips.length) return 1;
+    return Math.max(...trips.map(t => Number(t.tripNumber) || 0)) + 1;
+  }
+  window.setNow = function setNow(id) {
+    document.getElementById(id).value = formatDateTimeLocal(new Date());
+    updatePreview();
+  }
+  window.clearForm = function clearForm() {
+    document.getElementById("tourName").value = "";
+    document.getElementById("startTime").value = "";
+    document.getElementById("endTime").value = "";
+    updatePreview();
+  }
+  function updatePreview() {
+    const start = document.getElementById("startTime").value;
+    const end = document.getElementById("endTime").value;
+    const hours = (start && end) ? calculateDurationHours(start, end) : 0;
+    const allowance = calculateAllowance(hours);
+    document.getElementById("durationPreview").textContent = formatDuration(hours);
+    document.getElementById("allowancePreview").textContent = allowance.toFixed(2) + " €";
+  }
+
+  window.saveTrip = async function saveTrip() {
+    if (!currentUser || !db) return alert("Bitte zuerst anmelden.");
+    const tourName = (document.getElementById("tourName").value || "").trim() || "Ohne Bezeichnung";
+    const start = document.getElementById("startTime").value;
+    const end = document.getElementById("endTime").value;
+    if (!start || !end) return alert("Bitte Start und Ende eintragen.");
+
+    const hours = calculateDurationHours(start, end);
+    if (hours <= 0) return alert("Ende muss nach dem Start liegen.");
+
+    const allowance = calculateAllowance(hours);
+
+    await addDoc(collection(db, "users", currentUser.uid, "trips"), {
+      tripNumber: getNextTripNumber(),
+      tourName,
+      startTime: start,
+      endTime: end,
+      hours,
+      allowance,
+      allowanceType: getAllowanceType(allowance),
+      createdAt: serverTimestamp()
+    });
+
+    monthSelect.value = formatMonthKey(start);
+    clearForm();
+  }
+
+  window.editTrip = async function editTrip(id) {
+    if (!currentUser || !db) return;
+    const trip = trips.find(t => t.id === id);
+    if (!trip) return;
+
+    const newTour = prompt("Tour / Bemerkung", trip.tourName);
+    if (newTour === null) return;
+
+    const newStart = prompt("Losgefahren (YYYY-MM-DDTHH:MM)", trip.startTime);
+    if (newStart === null) return;
+
+    const newEnd = prompt("Angekommen (YYYY-MM-DDTHH:MM)", trip.endTime);
+    if (newEnd === null) return;
+
+    const hours = calculateDurationHours(newStart, newEnd);
+    if (hours <= 0) return alert("Ende muss nach dem Start liegen.");
+
+    const allowance = calculateAllowance(hours);
+
+    await updateDoc(doc(db, "users", currentUser.uid, "trips", id), {
+      tourName: newTour.trim() || "Ohne Bezeichnung",
+      startTime: newStart,
+      endTime: newEnd,
+      hours,
+      allowance,
+      allowanceType: getAllowanceType(allowance)
+    });
+  }
+
+  window.deleteTrip = async function deleteTrip(id) {
+    if (!currentUser || !db) return;
+    if (!confirm("Diese Fahrt wirklich löschen?")) return;
+    await deleteDoc(doc(db, "users", currentUser.uid, "trips", id));
+  }
+
+  function renderMonthSelect() {
+    const current = monthSelect.value;
+    const options = [...new Set(trips.map(t => formatMonthKey(t.startTime)))].sort((a,b) => b.localeCompare(a));
+    if (!options.length) {
+      monthSelect.innerHTML = '<option value="">Keine Monate vorhanden</option>';
+      return;
+    }
+    monthSelect.innerHTML = options.map(m => `<option value="${m}">${formatMonthLabel(m)}</option>`).join("");
+    monthSelect.value = options.includes(current) ? current : options[0];
+  }
+
+  function render() {
+    renderMonthSelect();
+    const month = selectedMonth();
+    const monthlyTrips = month ? trips.filter(t => formatMonthKey(t.startTime) === month) : [];
+    const monthlyTotal = monthlyTrips.reduce((s,t) => s + Number(t.allowance || 0), 0);
+    const monthlyHours = monthlyTrips.reduce((s,t) => s + Number(t.hours || 0), 0);
+    const overallTotal = trips.reduce((s,t) => s + Number(t.allowance || 0), 0);
+
+    document.getElementById("monthlyTotal").textContent = monthlyTotal.toFixed(2) + " €";
+    document.getElementById("monthlyHours").textContent = formatDuration(monthlyHours);
+    document.getElementById("overallTotal").textContent = overallTotal.toFixed(2) + " €";
+
+    const list = document.getElementById("tripList");
+    if (!monthlyTrips.length) {
+      list.innerHTML = '<div class="muted">Keine Fahrten in diesem Monat gespeichert.</div>';
+      return;
+    }
+
+    list.innerHTML = monthlyTrips.map(trip => `
+      <div class="trip">
+        <div>
+          <div class="trip-title">Nr. ${trip.tripNumber} – ${escapeHtml(trip.tourName)}</div>
+          <div class="small">${formatGermanDate(trip.startTime)} → ${formatGermanDate(trip.endTime)}</div>
+          <div class="small">Dauer: ${formatDuration(Number(trip.hours || 0))}</div>
+          <div class="small">Spesensatz: ${escapeHtml(trip.allowanceType || "")}</div>
+          <div class="small">Spesen: ${Number(trip.allowance || 0).toFixed(2)} €</div>
+        </div>
+        <div class="toolbar" style="margin-top:0;">
+          <button type="button" class="outline" onclick="editTrip('${trip.id}')">Bearbeiten</button>
+          <button type="button" class="danger" onclick="deleteTrip('${trip.id}')">Löschen</button>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  function escapeHtml(text) {
+    return String(text).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
+  function currentMonthlyTrips() {
+    const month = selectedMonth();
+    return month ? trips.filter(t => formatMonthKey(t.startTime) === month) : [];
+  }
+
+  window.exportCSV = function exportCSV() {
+    const month = selectedMonth();
+    const monthlyTrips = currentMonthlyTrips();
+    const monthlyTotal = monthlyTrips.reduce((s,t) => s + Number(t.allowance || 0), 0);
+
+    const rows = [
+      ["Nr.", "Tour", "Losgefahren", "Angekommen", "Dauer", "Spesensatz", "Spesen"],
+      ...monthlyTrips.map(trip => [
+        trip.tripNumber,
+        trip.tourName,
+        formatGermanDate(trip.startTime),
+        formatGermanDate(trip.endTime),
+        formatDuration(Number(trip.hours || 0)),
+        trip.allowanceType,
+        `${Number(trip.allowance || 0).toFixed(2)} €`
+      ]),
+      ["", "", "", "", "", "Monatssumme", `${monthlyTotal.toFixed(2)} €`]
+    ];
+
+    const csvContent = rows.map(row => row.map(cell => `"${String(cell).replaceAll('"', '""')}"`).join(";")).join("\n");
+    downloadFile(csvContent, `spesen-${month || 'monat'}.csv`, "text/csv;charset=utf-8;");
+  }
+
+  window.exportPDF = function exportPDF() {
+    const month = selectedMonth();
+    const monthlyTrips = currentMonthlyTrips();
+    const monthlyTotal = monthlyTrips.reduce((s,t) => s + Number(t.allowance || 0), 0);
+    const monthlyHours = monthlyTrips.reduce((s,t) => s + Number(t.hours || 0), 0);
+
+    const rowsHtml = monthlyTrips.map(trip => `
+      <tr>
+        <td>${trip.tripNumber}</td>
+        <td>${escapeHtml(trip.tourName)}</td>
+        <td>${formatGermanDate(trip.startTime)}</td>
+        <td>${formatGermanDate(trip.endTime)}</td>
+        <td>${formatDuration(Number(trip.hours || 0))}</td>
+        <td>${escapeHtml(trip.allowanceType || "")}</td>
+        <td>${Number(trip.allowance || 0).toFixed(2)} €</td>
+      </tr>
+    `).join("");
+
+    const html = `
+      <html>
+        <head>
+          <title>Spesen ${month}</title>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 24px; color: #111; }
+            h1 { margin-bottom: 6px; }
+            h2 { margin: 0 0 20px 0; font-size: 16px; font-weight: normal; }
+            .header-box { border: 2px solid #111; padding: 14px; margin-bottom: 18px; }
+            .meta-grid { width: 100%; border-collapse: collapse; margin-top: 12px; }
+            .meta-grid td { border: 1px solid #111; padding: 8px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+            th, td { border: 1px solid #111; padding: 8px; text-align: left; font-size: 13px; }
+            th { background: #e5e7eb; }
+            .sum-box { margin-top: 18px; border: 2px solid #111; padding: 12px; font-size: 16px; font-weight: bold; }
+            .footer-note { margin-top: 20px; font-size: 12px; color: #444; }
+          </style>
+        </head>
+        <body>
+          <div class="header-box">
+            <h1>Monatsabrechnung Spesen</h1>
+            <h2>${formatMonthLabel(month)}</h2>
+            <table class="meta-grid">
+              <tr>
+                <td><strong>Monat</strong></td>
+                <td>${formatMonthLabel(month)}</td>
+                <td><strong>Anzahl Fahrten</strong></td>
+                <td>${monthlyTrips.length}</td>
+              </tr>
+              <tr>
+                <td><strong>Gesamtstunden</strong></td>
+                <td>${formatDuration(monthlyHours)}</td>
+                <td><strong>Monatssumme</strong></td>
+                <td>${monthlyTotal.toFixed(2)} €</td>
+              </tr>
+            </table>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Nr.</th>
+                <th>Tour</th>
+                <th>Losgefahren</th>
+                <th>Angekommen</th>
+                <th>Dauer</th>
+                <th>Spesensatz</th>
+                <th>Spesen</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml || '<tr><td colspan="7">Keine Fahrten in diesem Monat.</td></tr>'}
+            </tbody>
+          </table>
+
+          <div class="sum-box">Monatssumme Spesen: ${monthlyTotal.toFixed(2)} €</div>
+          <div class="footer-note">Erstellt mit der Spesen-App für Micha.</div>
+        </body>
+      </html>
+    `;
+    const w = window.open("", "_blank");
+    if (!w) return alert("Pop-up blockiert. Bitte Pop-ups erlauben.");
+    w.document.open();
+    w.document.write(html);
+    w.document.close();
+    w.focus();
+    w.print();
+  }
+
+  monthSelect.addEventListener("change", render);
+  document.getElementById("startTime").addEventListener("input", updatePreview);
+  document.getElementById("endTime").addEventListener("input", updatePreview);
+
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => navigator.serviceWorker.register("./service-worker.js").catch(() => {}));
+  }
+
+  render();
+  updatePreview();
+</script>
+</body>
+</html>
