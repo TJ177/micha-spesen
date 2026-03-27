@@ -181,13 +181,13 @@
 
   // HIER EINTRAGEN: Firebase-Konfiguration aus der Firebase Console
   const firebaseConfig = {
-  apiKey: "AIzaSyCBXgseuSjsviWSq3c3SJv0-__8IFUTEWw",
-  authDomain: "micha-spesen.firebaseapp.com",
-  projectId: "micha-spesen",
-  storageBucket: "micha-spesen.firebasestorage.app",
-  messagingSenderId: "877124543127",
-  appId: "1:877124543127:web:56b36e85454b0805883fd2"
-};
+    apiKey: "HIER_API_KEY",
+    authDomain: "HIER_AUTH_DOMAIN",
+    projectId: "HIER_PROJECT_ID",
+    storageBucket: "HIER_STORAGE_BUCKET",
+    messagingSenderId: "HIER_MESSAGING_SENDER_ID",
+    appId: "HIER_APP_ID"
+  };
 
   const isConfigured = !Object.values(firebaseConfig).some(v => String(v).startsWith("HIER_"));
 
@@ -345,13 +345,18 @@
     return Math.max(...trips.map(t => Number(t.tripNumber) || 0)) + 1;
   }
   window.setNow = function setNow(id) {
-    document.getElementById(id).value = formatDateTimeLocal(new Date());
+    const now = formatDateTimeLocal(new Date());
+    document.getElementById(id).value = now;
+    localStorage.setItem(id, now);
     updatePreview();
   }
   window.clearForm = function clearForm() {
     document.getElementById("tourName").value = "";
     document.getElementById("startTime").value = "";
     document.getElementById("endTime").value = "";
+    localStorage.removeItem("tourName");
+    localStorage.removeItem("startTime");
+    localStorage.removeItem("endTime");
     updatePreview();
   }
   function updatePreview() {
@@ -593,6 +598,19 @@
   monthSelect.addEventListener("change", render);
   document.getElementById("startTime").addEventListener("input", updatePreview);
   document.getElementById("endTime").addEventListener("input", updatePreview);
+
+  ["tourName", "startTime", "endTime"].forEach(id => {
+    document.getElementById(id).addEventListener("input", (e) => {
+      localStorage.setItem(id, e.target.value);
+    });
+  });
+
+  ["tourName", "startTime", "endTime"].forEach(id => {
+    const value = localStorage.getItem(id);
+    if (value) {
+      document.getElementById(id).value = value;
+    }
+  });
 
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => navigator.serviceWorker.register("./service-worker.js").catch(() => {}));
