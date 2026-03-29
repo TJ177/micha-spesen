@@ -193,7 +193,8 @@
     serverTimestamp
   } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js';
 
-  [1000] const firebaseConfig = {
+  // [1000] Firebase unverändert
+  const firebaseConfig = {
     apiKey: "AIzaSyCBXgseuSjsviWSq3c3SJv0-__8IFUTEWw",
     authDomain: "micha-spesen.firebaseapp.com",
     projectId: "micha-spesen",
@@ -202,22 +203,23 @@
     appId: "1:877124543127:web:56b36e85454b0805883fd2"
   };
 
-  [1010] const isConfigured = !Object.values(firebaseConfig).some(v => String(v).startsWith("HIER_"));
+  // [1010] Grundvariablen
+  const isConfigured = !Object.values(firebaseConfig).some(v => String(v).startsWith("HIER_"));
+  const syncStatus = document.getElementById("syncStatus");
+  const authStatus = document.getElementById("authStatus");
+  const monthSelect = document.getElementById("monthSelect");
+  const savedEmailsSelect = document.getElementById("savedEmails");
+  const SAVED_EMAILS_KEY = "michaSpesenSavedEmails";
 
-  [1020] const syncStatus = document.getElementById("syncStatus");
-  [1030] const authStatus = document.getElementById("authStatus");
-  [1040] const monthSelect = document.getElementById("monthSelect");
-  [1050] const savedEmailsSelect = document.getElementById("savedEmails");
-  [1060] const SAVED_EMAILS_KEY = "michaSpesenSavedEmails";
+  let app = null;
+  let auth = null;
+  let db = null;
+  let currentUser = null;
+  let trips = [];
+  let unsubscribeTrips = null;
 
-  [1070] let app = null;
-  [1080] let auth = null;
-  [1090] let db = null;
-  [1100] let currentUser = null;
-  [1110] let trips = [];
-  [1120] let unsubscribeTrips = null;
-
-  [1130] if (!isConfigured) {
+  // [1100] Firebase Start
+  if (!isConfigured) {
     syncStatus.style.display = "block";
     syncStatus.className = "status warn";
     syncStatus.textContent = "Firebase ist noch nicht eingetragen. Erst die Werte in index.html einsetzen, dann klappt die Synchronisation.";
@@ -228,6 +230,7 @@
 
     onAuthStateChanged(auth, (user) => {
       currentUser = user || null;
+
       if (user) {
         authStatus.className = "status ok";
         authStatus.textContent = `Angemeldet als ${user.email}`;
@@ -250,7 +253,8 @@
     });
   }
 
-  [1200] function getSavedEmails() {
+  // [1200] Gespeicherte E-Mails
+  function getSavedEmails() {
     try {
       const raw = localStorage.getItem(SAVED_EMAILS_KEY);
       const parsed = raw ? JSON.parse(raw) : [];
@@ -260,12 +264,12 @@
     }
   }
 
-  [1210] function setSavedEmails(emails) {
+  function setSavedEmails(emails) {
     const cleanEmails = [...new Set(emails.map(e => String(e).trim()).filter(Boolean))];
     localStorage.setItem(SAVED_EMAILS_KEY, JSON.stringify(cleanEmails));
   }
 
-  [1220] function saveEmailAddress(email) {
+  function saveEmailAddress(email) {
     const cleanEmail = String(email || "").trim();
     if (!cleanEmail) return;
     const emails = getSavedEmails();
@@ -274,7 +278,7 @@
     renderSavedEmailsDropdown(cleanEmail);
   }
 
-  [1230] function removeEmailAddress(email) {
+  function removeEmailAddress(email) {
     const cleanEmail = String(email || "").trim();
     if (!cleanEmail) return;
     const emails = getSavedEmails().filter(e => e !== cleanEmail);
@@ -282,31 +286,33 @@
     renderSavedEmailsDropdown();
   }
 
-  [1240] function renderSavedEmailsDropdown(selectedEmail = "") {
+  function renderSavedEmailsDropdown(selectedEmail = "") {
     const emails = getSavedEmails();
     const options = ['<option value="">Bitte auswählen</option>']
       .concat(emails.map(email => `<option value="${escapeHtml(email)}">${escapeHtml(email)}</option>`));
+
     savedEmailsSelect.innerHTML = options.join("");
+
     if (selectedEmail && emails.includes(selectedEmail)) {
       savedEmailsSelect.value = selectedEmail;
     }
   }
 
-  [1250] window.fillSelectedEmail = function fillSelectedEmail() {
+  window.fillSelectedEmail = function fillSelectedEmail() {
     const selectedEmail = savedEmailsSelect.value;
     if (!selectedEmail) return;
     document.getElementById("email").value = selectedEmail;
-  }
+  };
 
-  [1260] window.saveCurrentEmail = function saveCurrentEmail() {
+  window.saveCurrentEmail = function saveCurrentEmail() {
     const email = document.getElementById("email").value.trim();
     if (!email) return alert("Bitte zuerst eine E-Mail eintragen.");
     saveEmailAddress(email);
     savedEmailsSelect.value = email;
     alert("E-Mail wurde gemerkt.");
-  }
+  };
 
-  [1270] window.removeSelectedEmail = function removeSelectedEmail() {
+  window.removeSelectedEmail = function removeSelectedEmail() {
     const selectedEmail = savedEmailsSelect.value;
     if (!selectedEmail) return alert("Bitte zuerst eine gespeicherte E-Mail auswählen.");
     if (!confirm(`Diese gespeicherte E-Mail entfernen?\n\n${selectedEmail}`)) return;
@@ -314,40 +320,48 @@
     if (document.getElementById("email").value.trim() === selectedEmail) {
       document.getElementById("email").value = "";
     }
-  }
+  };
 
-  [1300] window.signUp = async function signUp() {
+  // [1300] Anmeldung
+  window.signUp = async function signUp() {
     if (!auth) return alert("Firebase-Konfiguration fehlt.");
+
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
+
     if (!email || !password) return alert("Bitte E-Mail und Passwort eingeben.");
+
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       saveEmailAddress(email);
     } catch (e) {
       alert("Registrierung fehlgeschlagen: " + e.message);
     }
-  }
+  };
 
-  [1310] window.signIn = async function signIn() {
+  window.signIn = async function signIn() {
     if (!auth) return alert("Firebase-Konfiguration fehlt.");
+
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
+
     if (!email || !password) return alert("Bitte E-Mail und Passwort eingeben.");
+
     try {
       await signInWithEmailAndPassword(auth, email, password);
       saveEmailAddress(email);
     } catch (e) {
       alert("Anmeldung fehlgeschlagen: " + e.message);
     }
-  }
+  };
 
-  [1320] window.signOutUser = async function signOutUser() {
+  window.signOutUser = async function signOutUser() {
     if (!auth) return;
     await signOut(auth);
-  }
+  };
 
-  [1400] function subscribeTrips() {
+  // [1400] Daten laden
+  function subscribeTrips() {
     if (!currentUser || !db) return;
     if (unsubscribeTrips) unsubscribeTrips();
 
@@ -364,14 +378,26 @@
     });
   }
 
-  [1500] function formatDateTimeLocal(date) {
+  // [1500] Hilfsfunktionen
+  function formatDateTimeLocal(date) {
     const pad = (n) => String(n).padStart(2, "0");
     return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
   }
 
-  [1510] function formatGermanDate(dateString) {
-    if (!dateString) return "-";
-    const d = new Date(dateString);
+  function parseLocalDateTime(dateTimeString) {
+    if (!dateTimeString) return null;
+    const normalized = String(dateTimeString).trim().replace(" ", "T");
+    const [datePart = "", timePart = "00:00"] = normalized.split("T");
+    const [year, month, day] = datePart.split("-").map(Number);
+    const [hour = 0, minute = 0] = timePart.split(":").map(Number);
+
+    if (!year || !month || !day) return null;
+    return new Date(year, month - 1, day, hour || 0, minute || 0, 0, 0);
+  }
+
+  function formatGermanDate(dateString) {
+    const d = parseLocalDateTime(dateString);
+    if (!d) return "-";
     return d.toLocaleString("de-DE", {
       day:"2-digit",
       month:"2-digit",
@@ -381,25 +407,31 @@
     });
   }
 
-  [1520] function formatMonthKey(dateString) {
-    const d = new Date(dateString);
+  function formatMonthKey(dateString) {
+    const d = parseLocalDateTime(dateString);
+    if (!d) return "";
     return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
   }
 
-  [1530] function formatMonthLabel(monthKey) {
+  function formatMonthLabel(monthKey) {
     if (!monthKey) return "Kein Monat";
     const [year, month] = monthKey.split("-");
     const d = new Date(Number(year), Number(month)-1, 1);
     return d.toLocaleDateString("de-DE", {month:"long", year:"numeric"});
   }
 
-  [1540] function calculateDurationHours(start, end) {
-    const diffMs = new Date(end) - new Date(start);
+  function calculateDurationHours(start, end) {
+    const startDate = parseLocalDateTime(start);
+    const endDate = parseLocalDateTime(end);
+    if (!startDate || !endDate) return 0;
+
+    const diffMs = endDate.getTime() - startDate.getTime();
     if (Number.isNaN(diffMs) || diffMs <= 0) return 0;
+
     return diffMs / (1000 * 60 * 60);
   }
 
-  [1550] function calculateAllowance(hours) {
+  function calculateAllowance(hours) {
     if (hours < 8) return 0;
     const fullDays = Math.floor(hours / 24);
     const remainingHours = hours % 24;
@@ -408,7 +440,7 @@
     return total;
   }
 
-  [1560] function getAllowanceType(amount) {
+  function getAllowanceType(amount) {
     if (amount === 0) return "0 €";
     if (amount === 14) return "14 €";
     if (amount === 28) return "28 €";
@@ -417,14 +449,14 @@
     return `${amount} €`;
   }
 
-  [1570] function formatDuration(hours) {
+  function formatDuration(hours) {
     const totalMinutes = Math.round(hours * 60);
     const h = Math.floor(totalMinutes / 60);
     const m = totalMinutes % 60;
     return `${h} Std ${m} Min`;
   }
 
-  [1580] function downloadFile(content, filename, type) {
+  function downloadFile(content, filename, type) {
     const blob = new Blob([content], { type });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -436,44 +468,51 @@
     URL.revokeObjectURL(url);
   }
 
-  [1590] function selectedMonth() {
+  function selectedMonth() {
     return monthSelect.value;
   }
 
-  [1600] function getNextTripNumber() {
+  function getNextTripNumber() {
     if (!trips.length) return 1;
     return Math.max(...trips.map(t => Number(t.tripNumber) || 0)) + 1;
   }
 
-  [1610] function getTripsSortedByStartTimeAsc(sourceTrips = []) {
+  function toSortableTimestamp(dateTimeString) {
+    const d = parseLocalDateTime(dateTimeString);
+    return d ? d.getTime() : 0;
+  }
+
+  function getTripsSortedByStartTimeAsc(sourceTrips = []) {
     return [...sourceTrips].sort((a, b) => {
-      const timeA = new Date(a.startTime).getTime();
-      const timeB = new Date(b.startTime).getTime();
-      return timeA - timeB;
+      return toSortableTimestamp(a.startTime) - toSortableTimestamp(b.startTime);
     });
   }
 
-  [1620] function getTripsWithDisplayNumbers(sourceTrips = []) {
-    return getTripsSortedByStartTimeAsc(sourceTrips).map((trip, index) => ({
+  function getSortedMonthlyTrips(sourceTrips = []) {
+    const month = selectedMonth();
+    if (!month) return [];
+
+    return getTripsSortedByStartTimeAsc(
+      sourceTrips.filter(t => formatMonthKey(t.startTime) === month)
+    );
+  }
+
+  function getNumberedMonthlyTrips(sourceTrips = []) {
+    return getSortedMonthlyTrips(sourceTrips).map((trip, index) => ({
       ...trip,
       displayNumber: index + 1
     }));
   }
 
-  [1630] function currentMonthlyTrips() {
-    const month = selectedMonth();
-    const allTripsWithNumbers = getTripsWithDisplayNumbers(trips);
-    return month ? allTripsWithNumbers.filter(t => formatMonthKey(t.startTime) === month) : [];
-  }
-
-  [1700] window.setNow = function setNow(id) {
+  // [1600] Formular
+  window.setNow = function setNow(id) {
     const now = formatDateTimeLocal(new Date());
     document.getElementById(id).value = now;
     localStorage.setItem(id, now);
     updatePreview();
-  }
+  };
 
-  [1710] window.clearForm = function clearForm() {
+  window.clearForm = function clearForm() {
     document.getElementById("tourName").value = "";
     document.getElementById("startTime").value = "";
     document.getElementById("endTime").value = "";
@@ -481,19 +520,22 @@
     localStorage.removeItem("startTime");
     localStorage.removeItem("endTime");
     updatePreview();
-  }
+  };
 
-  [1720] function updatePreview() {
+  function updatePreview() {
     const start = document.getElementById("startTime").value;
     const end = document.getElementById("endTime").value;
     const hours = (start && end) ? calculateDurationHours(start, end) : 0;
     const allowance = calculateAllowance(hours);
+
     document.getElementById("durationPreview").textContent = formatDuration(hours);
     document.getElementById("allowancePreview").textContent = allowance.toFixed(2) + " €";
   }
 
-  [1800] window.saveTrip = async function saveTrip() {
+  // [1700] Speichern / Bearbeiten / Löschen
+  window.saveTrip = async function saveTrip() {
     if (!currentUser || !db) return alert("Bitte zuerst anmelden.");
+
     const tourName = (document.getElementById("tourName").value || "").trim() || "Ohne Bezeichnung";
     const start = document.getElementById("startTime").value;
     const end = document.getElementById("endTime").value;
@@ -518,10 +560,11 @@
 
     monthSelect.value = formatMonthKey(start);
     clearForm();
-  }
+  };
 
-  [1810] window.editTrip = async function editTrip(id) {
+  window.editTrip = async function editTrip(id) {
     if (!currentUser || !db) return;
+
     const trip = trips.find(t => t.id === id);
     if (!trip) return;
 
@@ -547,17 +590,19 @@
       allowance,
       allowanceType: getAllowanceType(allowance)
     });
-  }
+  };
 
-  [1820] window.deleteTrip = async function deleteTrip(id) {
+  window.deleteTrip = async function deleteTrip(id) {
     if (!currentUser || !db) return;
     if (!confirm("Diese Fahrt wirklich löschen?")) return;
     await deleteDoc(doc(db, "users", currentUser.uid, "trips", id));
-  }
+  };
 
-  [1900] function renderMonthSelect() {
+  // [1800] Monatsauswahl
+  function renderMonthSelect() {
     const current = monthSelect.value;
-    const options = [...new Set(trips.map(t => formatMonthKey(t.startTime)))].sort((a,b) => b.localeCompare(a));
+    const options = [...new Set(trips.map(t => formatMonthKey(t.startTime)).filter(Boolean))]
+      .sort((a, b) => b.localeCompare(a));
 
     if (!options.length) {
       monthSelect.innerHTML = '<option value="">Keine Monate vorhanden</option>';
@@ -568,22 +613,21 @@
     monthSelect.value = options.includes(current) ? current : options[0];
   }
 
-  [2000] function render() {
+  // [1900] Anzeige
+  function render() {
     renderMonthSelect();
 
-    const month = selectedMonth();
-    const allTripsWithNumbers = getTripsWithDisplayNumbers(trips);
-    const monthlyTrips = month ? allTripsWithNumbers.filter(t => formatMonthKey(t.startTime) === month) : [];
-
-    const monthlyTotal = monthlyTrips.reduce((s,t) => s + Number(t.allowance || 0), 0);
-    const monthlyHours = monthlyTrips.reduce((s,t) => s + Number(t.hours || 0), 0);
-    const overallTotal = allTripsWithNumbers.reduce((s,t) => s + Number(t.allowance || 0), 0);
+    const monthlyTrips = getNumberedMonthlyTrips(trips);
+    const monthlyTotal = monthlyTrips.reduce((s, t) => s + Number(t.allowance || 0), 0);
+    const monthlyHours = monthlyTrips.reduce((s, t) => s + Number(t.hours || 0), 0);
+    const overallTotal = trips.reduce((s, t) => s + Number(t.allowance || 0), 0);
 
     document.getElementById("monthlyTotal").textContent = monthlyTotal.toFixed(2) + " €";
     document.getElementById("monthlyHours").textContent = formatDuration(monthlyHours);
     document.getElementById("overallTotal").textContent = overallTotal.toFixed(2) + " €";
 
     const list = document.getElementById("tripList");
+
     if (!monthlyTrips.length) {
       list.innerHTML = '<div class="muted">Keine Fahrten in diesem Monat gespeichert.</div>';
       return;
@@ -606,7 +650,7 @@
     `).join("");
   }
 
-  [2010] function escapeHtml(text) {
+  function escapeHtml(text) {
     return String(text).replace(/[&<>"']/g, m => ({
       '&':'&amp;',
       '<':'&lt;',
@@ -616,10 +660,11 @@
     }[m]));
   }
 
-  [2100] window.exportCSV = function exportCSV() {
+  // [2000] Export CSV
+  window.exportCSV = function exportCSV() {
     const month = selectedMonth();
-    const monthlyTrips = currentMonthlyTrips();
-    const monthlyTotal = monthlyTrips.reduce((s,t) => s + Number(t.allowance || 0), 0);
+    const monthlyTrips = getNumberedMonthlyTrips(trips);
+    const monthlyTotal = monthlyTrips.reduce((s, t) => s + Number(t.allowance || 0), 0);
 
     const rows = [
       ["Nr.", "Tour", "Losgefahren", "Angekommen", "Dauer", "Spesensatz", "Spesen"],
@@ -640,13 +685,14 @@
       .join("\n");
 
     downloadFile(csvContent, `spesen-${month || 'monat'}.csv`, "text/csv;charset=utf-8;");
-  }
+  };
 
-  [2200] window.exportPDF = function exportPDF() {
+  // [2100] Export PDF
+  window.exportPDF = function exportPDF() {
     const month = selectedMonth();
-    const monthlyTrips = currentMonthlyTrips();
-    const monthlyTotal = monthlyTrips.reduce((s,t) => s + Number(t.allowance || 0), 0);
-    const monthlyHours = monthlyTrips.reduce((s,t) => s + Number(t.hours || 0), 0);
+    const monthlyTrips = getNumberedMonthlyTrips(trips);
+    const monthlyTotal = monthlyTrips.reduce((s, t) => s + Number(t.allowance || 0), 0);
+    const monthlyHours = monthlyTrips.reduce((s, t) => s + Number(t.hours || 0), 0);
 
     const rowsHtml = monthlyTrips.map(trip => `
       <tr>
@@ -728,32 +774,34 @@
     w.document.close();
     w.focus();
     w.print();
-  }
+  };
 
-  [2300] monthSelect.addEventListener("change", render);
-  [2310] document.getElementById("startTime").addEventListener("input", updatePreview);
-  [2320] document.getElementById("endTime").addEventListener("input", updatePreview);
+  // [2200] Events
+  monthSelect.addEventListener("change", render);
+  document.getElementById("startTime").addEventListener("input", updatePreview);
+  document.getElementById("endTime").addEventListener("input", updatePreview);
 
-  [2330] ["tourName", "startTime", "endTime"].forEach(id => {
+  ["tourName", "startTime", "endTime"].forEach(id => {
     document.getElementById(id).addEventListener("input", (e) => {
       localStorage.setItem(id, e.target.value);
     });
   });
 
-  [2340] ["tourName", "startTime", "endTime"].forEach(id => {
+  ["tourName", "startTime", "endTime"].forEach(id => {
     const value = localStorage.getItem(id);
     if (value) {
       document.getElementById(id).value = value;
     }
   });
 
-  [2350] if ("serviceWorker" in navigator) {
+  if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => navigator.serviceWorker.register("./service-worker.js").catch(() => {}));
   }
 
-  [2360] renderSavedEmailsDropdown();
-  [2370] render();
-  [2380] updatePreview();
+  // [2300] Start
+  renderSavedEmailsDropdown();
+  render();
+  updatePreview();
 </script>
 </body>
 </html>
