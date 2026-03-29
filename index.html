@@ -65,16 +65,30 @@
     <div class="grid">
       <div class="card">
         <h2>Anmeldung</h2>
-        <div class="login-grid">
+
+        <label for="savedEmails">Gespeicherte E-Mail auswählen</label>
+        <div class="row">
+          <select id="savedEmails">
+            <option value="">Bitte auswählen</option>
+          </select>
+          <button type="button" class="outline" onclick="fillSelectedEmail()">Übernehmen</button>
+        </div>
+
+        <div class="login-grid" style="margin-top:12px;">
           <input id="email" type="email" placeholder="E-Mail" autocomplete="username">
           <input id="password" type="password" placeholder="Passwort" autocomplete="current-password">
           <button type="button" onclick="signIn()">Anmelden</button>
           <button type="button" class="outline" onclick="signUp()">Registrieren</button>
         </div>
+
         <div class="toolbar">
+          <button type="button" class="outline" onclick="saveCurrentEmail()">E-Mail merken</button>
+          <button type="button" class="outline" onclick="removeSelectedEmail()">Ausgewählte E-Mail löschen</button>
           <button type="button" class="outline" onclick="signOutUser()">Abmelden</button>
         </div>
-        <div class="small">Einmal registrieren, danach mit denselben Daten auf Handy und PC anmelden.</div>
+
+        <div class="small">Die App merkt sich nur E-Mail-Adressen. Passwörter werden nicht in der App gespeichert.</div>
+        <div class="small">Passwörter bitte nur über den Browser oder Passwortmanager speichern lassen.</div>
         <div id="authStatus" class="status warn">Noch nicht angemeldet.</div>
       </div>
 
@@ -179,30 +193,31 @@
     serverTimestamp
   } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js';
 
-  // HIER EINTRAGEN: Firebase-Konfiguration aus der Firebase Console
-const firebaseConfig = {
-  apiKey: "AIzaSyCBXgseuSjsviWSq3c3SJv0-__8IFUTEWw",
-  authDomain: "micha-spesen.firebaseapp.com",
-  projectId: "micha-spesen",
-  storageBucket: "micha-spesen.firebasestorage.app",
-  messagingSenderId: "877124543127",
-  appId: "1:877124543127:web:56b36e85454b0805883fd2"
-};
+  [1000] const firebaseConfig = {
+    apiKey: "AIzaSyCBXgseuSjsviWSq3c3SJv0-__8IFUTEWw",
+    authDomain: "micha-spesen.firebaseapp.com",
+    projectId: "micha-spesen",
+    storageBucket: "micha-spesen.firebasestorage.app",
+    messagingSenderId: "877124543127",
+    appId: "1:877124543127:web:56b36e85454b0805883fd2"
+  };
 
-  const isConfigured = !Object.values(firebaseConfig).some(v => String(v).startsWith("HIER_"));
+  [1010] const isConfigured = !Object.values(firebaseConfig).some(v => String(v).startsWith("HIER_"));
 
-  const syncStatus = document.getElementById("syncStatus");
-  const authStatus = document.getElementById("authStatus");
-  const monthSelect = document.getElementById("monthSelect");
+  [1020] const syncStatus = document.getElementById("syncStatus");
+  [1030] const authStatus = document.getElementById("authStatus");
+  [1040] const monthSelect = document.getElementById("monthSelect");
+  [1050] const savedEmailsSelect = document.getElementById("savedEmails");
+  [1060] const SAVED_EMAILS_KEY = "michaSpesenSavedEmails";
 
-  let app = null;
-  let auth = null;
-  let db = null;
-  let currentUser = null;
-  let trips = [];
-  let unsubscribeTrips = null;
+  [1070] let app = null;
+  [1080] let auth = null;
+  [1090] let db = null;
+  [1100] let currentUser = null;
+  [1110] let trips = [];
+  [1120] let unsubscribeTrips = null;
 
-  if (!isConfigured) {
+  [1130] if (!isConfigured) {
     syncStatus.style.display = "block";
     syncStatus.className = "status warn";
     syncStatus.textContent = "Firebase ist noch nicht eingetragen. Erst die Werte in index.html einsetzen, dann klappt die Synchronisation.";
@@ -219,6 +234,7 @@ const firebaseConfig = {
         syncStatus.style.display = "block";
         syncStatus.className = "status ok";
         syncStatus.textContent = "Synchronisation aktiv.";
+        saveEmailAddress(user.email);
         subscribeTrips();
       } else {
         authStatus.className = "status warn";
@@ -234,41 +250,109 @@ const firebaseConfig = {
     });
   }
 
-  window.signUp = async function signUp() {
+  [1200] function getSavedEmails() {
+    try {
+      const raw = localStorage.getItem(SAVED_EMAILS_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed.filter(Boolean) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  [1210] function setSavedEmails(emails) {
+    const cleanEmails = [...new Set(emails.map(e => String(e).trim()).filter(Boolean))];
+    localStorage.setItem(SAVED_EMAILS_KEY, JSON.stringify(cleanEmails));
+  }
+
+  [1220] function saveEmailAddress(email) {
+    const cleanEmail = String(email || "").trim();
+    if (!cleanEmail) return;
+    const emails = getSavedEmails();
+    const newEmails = [cleanEmail, ...emails.filter(e => e !== cleanEmail)];
+    setSavedEmails(newEmails);
+    renderSavedEmailsDropdown(cleanEmail);
+  }
+
+  [1230] function removeEmailAddress(email) {
+    const cleanEmail = String(email || "").trim();
+    if (!cleanEmail) return;
+    const emails = getSavedEmails().filter(e => e !== cleanEmail);
+    setSavedEmails(emails);
+    renderSavedEmailsDropdown();
+  }
+
+  [1240] function renderSavedEmailsDropdown(selectedEmail = "") {
+    const emails = getSavedEmails();
+    const options = ['<option value="">Bitte auswählen</option>']
+      .concat(emails.map(email => `<option value="${escapeHtml(email)}">${escapeHtml(email)}</option>`));
+    savedEmailsSelect.innerHTML = options.join("");
+    if (selectedEmail && emails.includes(selectedEmail)) {
+      savedEmailsSelect.value = selectedEmail;
+    }
+  }
+
+  [1250] window.fillSelectedEmail = function fillSelectedEmail() {
+    const selectedEmail = savedEmailsSelect.value;
+    if (!selectedEmail) return;
+    document.getElementById("email").value = selectedEmail;
+  }
+
+  [1260] window.saveCurrentEmail = function saveCurrentEmail() {
+    const email = document.getElementById("email").value.trim();
+    if (!email) return alert("Bitte zuerst eine E-Mail eintragen.");
+    saveEmailAddress(email);
+    savedEmailsSelect.value = email;
+    alert("E-Mail wurde gemerkt.");
+  }
+
+  [1270] window.removeSelectedEmail = function removeSelectedEmail() {
+    const selectedEmail = savedEmailsSelect.value;
+    if (!selectedEmail) return alert("Bitte zuerst eine gespeicherte E-Mail auswählen.");
+    if (!confirm(`Diese gespeicherte E-Mail entfernen?\n\n${selectedEmail}`)) return;
+    removeEmailAddress(selectedEmail);
+    if (document.getElementById("email").value.trim() === selectedEmail) {
+      document.getElementById("email").value = "";
+    }
+  }
+
+  [1300] window.signUp = async function signUp() {
     if (!auth) return alert("Firebase-Konfiguration fehlt.");
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
     if (!email || !password) return alert("Bitte E-Mail und Passwort eingeben.");
     try {
       await createUserWithEmailAndPassword(auth, email, password);
+      saveEmailAddress(email);
     } catch (e) {
       alert("Registrierung fehlgeschlagen: " + e.message);
     }
   }
 
-  window.signIn = async function signIn() {
+  [1310] window.signIn = async function signIn() {
     if (!auth) return alert("Firebase-Konfiguration fehlt.");
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
     if (!email || !password) return alert("Bitte E-Mail und Passwort eingeben.");
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      saveEmailAddress(email);
     } catch (e) {
       alert("Anmeldung fehlgeschlagen: " + e.message);
     }
   }
 
-  window.signOutUser = async function signOutUser() {
+  [1320] window.signOutUser = async function signOutUser() {
     if (!auth) return;
     await signOut(auth);
   }
 
-  function subscribeTrips() {
+  [1400] function subscribeTrips() {
     if (!currentUser || !db) return;
     if (unsubscribeTrips) unsubscribeTrips();
 
     const tripsRef = collection(db, "users", currentUser.uid, "trips");
-    const q = query(tripsRef, orderBy("startTime", "desc"));
+    const q = query(tripsRef, orderBy("startTime", "asc"));
 
     unsubscribeTrips = onSnapshot(q, (snapshot) => {
       trips = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -280,31 +364,42 @@ const firebaseConfig = {
     });
   }
 
-  function formatDateTimeLocal(date) {
+  [1500] function formatDateTimeLocal(date) {
     const pad = (n) => String(n).padStart(2, "0");
     return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
   }
-  function formatGermanDate(dateString) {
+
+  [1510] function formatGermanDate(dateString) {
     if (!dateString) return "-";
     const d = new Date(dateString);
-    return d.toLocaleString("de-DE", {day:"2-digit", month:"2-digit", year:"numeric", hour:"2-digit", minute:"2-digit"});
+    return d.toLocaleString("de-DE", {
+      day:"2-digit",
+      month:"2-digit",
+      year:"numeric",
+      hour:"2-digit",
+      minute:"2-digit"
+    });
   }
-  function formatMonthKey(dateString) {
+
+  [1520] function formatMonthKey(dateString) {
     const d = new Date(dateString);
     return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
   }
-  function formatMonthLabel(monthKey) {
+
+  [1530] function formatMonthLabel(monthKey) {
     if (!monthKey) return "Kein Monat";
     const [year, month] = monthKey.split("-");
     const d = new Date(Number(year), Number(month)-1, 1);
     return d.toLocaleDateString("de-DE", {month:"long", year:"numeric"});
   }
-  function calculateDurationHours(start, end) {
+
+  [1540] function calculateDurationHours(start, end) {
     const diffMs = new Date(end) - new Date(start);
     if (Number.isNaN(diffMs) || diffMs <= 0) return 0;
     return diffMs / (1000 * 60 * 60);
   }
-  function calculateAllowance(hours) {
+
+  [1550] function calculateAllowance(hours) {
     if (hours < 8) return 0;
     const fullDays = Math.floor(hours / 24);
     const remainingHours = hours % 24;
@@ -312,7 +407,8 @@ const firebaseConfig = {
     if (remainingHours >= 8) total += 14;
     return total;
   }
-  function getAllowanceType(amount) {
+
+  [1560] function getAllowanceType(amount) {
     if (amount === 0) return "0 €";
     if (amount === 14) return "14 €";
     if (amount === 28) return "28 €";
@@ -320,13 +416,15 @@ const firebaseConfig = {
     if (amount > 28) return `${amount} € (24h + Rest)`;
     return `${amount} €`;
   }
-  function formatDuration(hours) {
+
+  [1570] function formatDuration(hours) {
     const totalMinutes = Math.round(hours * 60);
     const h = Math.floor(totalMinutes / 60);
     const m = totalMinutes % 60;
     return `${h} Std ${m} Min`;
   }
-  function downloadFile(content, filename, type) {
+
+  [1580] function downloadFile(content, filename, type) {
     const blob = new Blob([content], { type });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -337,20 +435,45 @@ const firebaseConfig = {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   }
-  function selectedMonth() {
+
+  [1590] function selectedMonth() {
     return monthSelect.value;
   }
-  function getNextTripNumber() {
+
+  [1600] function getNextTripNumber() {
     if (!trips.length) return 1;
     return Math.max(...trips.map(t => Number(t.tripNumber) || 0)) + 1;
   }
-  window.setNow = function setNow(id) {
+
+  [1610] function getTripsSortedByStartTimeAsc(sourceTrips = []) {
+    return [...sourceTrips].sort((a, b) => {
+      const timeA = new Date(a.startTime).getTime();
+      const timeB = new Date(b.startTime).getTime();
+      return timeA - timeB;
+    });
+  }
+
+  [1620] function getTripsWithDisplayNumbers(sourceTrips = []) {
+    return getTripsSortedByStartTimeAsc(sourceTrips).map((trip, index) => ({
+      ...trip,
+      displayNumber: index + 1
+    }));
+  }
+
+  [1630] function currentMonthlyTrips() {
+    const month = selectedMonth();
+    const allTripsWithNumbers = getTripsWithDisplayNumbers(trips);
+    return month ? allTripsWithNumbers.filter(t => formatMonthKey(t.startTime) === month) : [];
+  }
+
+  [1700] window.setNow = function setNow(id) {
     const now = formatDateTimeLocal(new Date());
     document.getElementById(id).value = now;
     localStorage.setItem(id, now);
     updatePreview();
   }
-  window.clearForm = function clearForm() {
+
+  [1710] window.clearForm = function clearForm() {
     document.getElementById("tourName").value = "";
     document.getElementById("startTime").value = "";
     document.getElementById("endTime").value = "";
@@ -359,7 +482,8 @@ const firebaseConfig = {
     localStorage.removeItem("endTime");
     updatePreview();
   }
-  function updatePreview() {
+
+  [1720] function updatePreview() {
     const start = document.getElementById("startTime").value;
     const end = document.getElementById("endTime").value;
     const hours = (start && end) ? calculateDurationHours(start, end) : 0;
@@ -368,11 +492,12 @@ const firebaseConfig = {
     document.getElementById("allowancePreview").textContent = allowance.toFixed(2) + " €";
   }
 
-  window.saveTrip = async function saveTrip() {
+  [1800] window.saveTrip = async function saveTrip() {
     if (!currentUser || !db) return alert("Bitte zuerst anmelden.");
     const tourName = (document.getElementById("tourName").value || "").trim() || "Ohne Bezeichnung";
     const start = document.getElementById("startTime").value;
     const end = document.getElementById("endTime").value;
+
     if (!start || !end) return alert("Bitte Start und Ende eintragen.");
 
     const hours = calculateDurationHours(start, end);
@@ -395,7 +520,7 @@ const firebaseConfig = {
     clearForm();
   }
 
-  window.editTrip = async function editTrip(id) {
+  [1810] window.editTrip = async function editTrip(id) {
     if (!currentUser || !db) return;
     const trip = trips.find(t => t.id === id);
     if (!trip) return;
@@ -424,30 +549,35 @@ const firebaseConfig = {
     });
   }
 
-  window.deleteTrip = async function deleteTrip(id) {
+  [1820] window.deleteTrip = async function deleteTrip(id) {
     if (!currentUser || !db) return;
     if (!confirm("Diese Fahrt wirklich löschen?")) return;
     await deleteDoc(doc(db, "users", currentUser.uid, "trips", id));
   }
 
-  function renderMonthSelect() {
+  [1900] function renderMonthSelect() {
     const current = monthSelect.value;
     const options = [...new Set(trips.map(t => formatMonthKey(t.startTime)))].sort((a,b) => b.localeCompare(a));
+
     if (!options.length) {
       monthSelect.innerHTML = '<option value="">Keine Monate vorhanden</option>';
       return;
     }
+
     monthSelect.innerHTML = options.map(m => `<option value="${m}">${formatMonthLabel(m)}</option>`).join("");
     monthSelect.value = options.includes(current) ? current : options[0];
   }
 
-  function render() {
+  [2000] function render() {
     renderMonthSelect();
+
     const month = selectedMonth();
-    const monthlyTrips = month ? trips.filter(t => formatMonthKey(t.startTime) === month) : [];
+    const allTripsWithNumbers = getTripsWithDisplayNumbers(trips);
+    const monthlyTrips = month ? allTripsWithNumbers.filter(t => formatMonthKey(t.startTime) === month) : [];
+
     const monthlyTotal = monthlyTrips.reduce((s,t) => s + Number(t.allowance || 0), 0);
     const monthlyHours = monthlyTrips.reduce((s,t) => s + Number(t.hours || 0), 0);
-    const overallTotal = trips.reduce((s,t) => s + Number(t.allowance || 0), 0);
+    const overallTotal = allTripsWithNumbers.reduce((s,t) => s + Number(t.allowance || 0), 0);
 
     document.getElementById("monthlyTotal").textContent = monthlyTotal.toFixed(2) + " €";
     document.getElementById("monthlyHours").textContent = formatDuration(monthlyHours);
@@ -462,7 +592,7 @@ const firebaseConfig = {
     list.innerHTML = monthlyTrips.map(trip => `
       <div class="trip">
         <div>
-          <div class="trip-title">Nr. ${trip.tripNumber} – ${escapeHtml(trip.tourName)}</div>
+          <div class="trip-title">Nr. ${trip.displayNumber} – ${escapeHtml(trip.tourName)}</div>
           <div class="small">${formatGermanDate(trip.startTime)} → ${formatGermanDate(trip.endTime)}</div>
           <div class="small">Dauer: ${formatDuration(Number(trip.hours || 0))}</div>
           <div class="small">Spesensatz: ${escapeHtml(trip.allowanceType || "")}</div>
@@ -476,16 +606,17 @@ const firebaseConfig = {
     `).join("");
   }
 
-  function escapeHtml(text) {
-    return String(text).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  [2010] function escapeHtml(text) {
+    return String(text).replace(/[&<>"']/g, m => ({
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      '"':'&quot;',
+      "'":'&#39;'
+    }[m]));
   }
 
-  function currentMonthlyTrips() {
-    const month = selectedMonth();
-    return month ? trips.filter(t => formatMonthKey(t.startTime) === month) : [];
-  }
-
-  window.exportCSV = function exportCSV() {
+  [2100] window.exportCSV = function exportCSV() {
     const month = selectedMonth();
     const monthlyTrips = currentMonthlyTrips();
     const monthlyTotal = monthlyTrips.reduce((s,t) => s + Number(t.allowance || 0), 0);
@@ -493,7 +624,7 @@ const firebaseConfig = {
     const rows = [
       ["Nr.", "Tour", "Losgefahren", "Angekommen", "Dauer", "Spesensatz", "Spesen"],
       ...monthlyTrips.map(trip => [
-        trip.tripNumber,
+        trip.displayNumber,
         trip.tourName,
         formatGermanDate(trip.startTime),
         formatGermanDate(trip.endTime),
@@ -504,11 +635,14 @@ const firebaseConfig = {
       ["", "", "", "", "", "Monatssumme", `${monthlyTotal.toFixed(2)} €`]
     ];
 
-    const csvContent = rows.map(row => row.map(cell => `"${String(cell).replaceAll('"', '""')}"`).join(";")).join("\n");
+    const csvContent = rows
+      .map(row => row.map(cell => `"${String(cell).replaceAll('"', '""')}"`).join(";"))
+      .join("\n");
+
     downloadFile(csvContent, `spesen-${month || 'monat'}.csv`, "text/csv;charset=utf-8;");
   }
 
-  window.exportPDF = function exportPDF() {
+  [2200] window.exportPDF = function exportPDF() {
     const month = selectedMonth();
     const monthlyTrips = currentMonthlyTrips();
     const monthlyTotal = monthlyTrips.reduce((s,t) => s + Number(t.allowance || 0), 0);
@@ -516,7 +650,7 @@ const firebaseConfig = {
 
     const rowsHtml = monthlyTrips.map(trip => `
       <tr>
-        <td>${trip.tripNumber}</td>
+        <td>${trip.displayNumber}</td>
         <td>${escapeHtml(trip.tourName)}</td>
         <td>${formatGermanDate(trip.startTime)}</td>
         <td>${formatGermanDate(trip.endTime)}</td>
@@ -586,6 +720,7 @@ const firebaseConfig = {
         </body>
       </html>
     `;
+
     const w = window.open("", "_blank");
     if (!w) return alert("Pop-up blockiert. Bitte Pop-ups erlauben.");
     w.document.open();
@@ -595,29 +730,30 @@ const firebaseConfig = {
     w.print();
   }
 
-  monthSelect.addEventListener("change", render);
-  document.getElementById("startTime").addEventListener("input", updatePreview);
-  document.getElementById("endTime").addEventListener("input", updatePreview);
+  [2300] monthSelect.addEventListener("change", render);
+  [2310] document.getElementById("startTime").addEventListener("input", updatePreview);
+  [2320] document.getElementById("endTime").addEventListener("input", updatePreview);
 
-  ["tourName", "startTime", "endTime"].forEach(id => {
+  [2330] ["tourName", "startTime", "endTime"].forEach(id => {
     document.getElementById(id).addEventListener("input", (e) => {
       localStorage.setItem(id, e.target.value);
     });
   });
 
-  ["tourName", "startTime", "endTime"].forEach(id => {
+  [2340] ["tourName", "startTime", "endTime"].forEach(id => {
     const value = localStorage.getItem(id);
     if (value) {
       document.getElementById(id).value = value;
     }
   });
 
-  if ("serviceWorker" in navigator) {
+  [2350] if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => navigator.serviceWorker.register("./service-worker.js").catch(() => {}));
   }
 
-  render();
-  updatePreview();
+  [2360] renderSavedEmailsDropdown();
+  [2370] render();
+  [2380] updatePreview();
 </script>
 </body>
 </html>
