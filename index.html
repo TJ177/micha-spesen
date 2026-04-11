@@ -3,144 +3,117 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Spesen von Stil & Struktur</title>
+  <title>Micha Spesen</title>
   <meta name="theme-color" content="#111827" />
+  <link rel="manifest" href="manifest.webmanifest" />
   <style>
     :root{
-      --bg:#0b1635; --card:#1c2a4d; --panel:#101d3c; --text:#ffffff; --muted:#b8c4dd; --line:#41557f;
-      --accent:#3b82f6; --ok:#22c55e; --warn:#ef4444; --yellow:#facc15;
+      --bg:#f3f4f6; --card:#ffffff; --text:#111827; --muted:#6b7280; --line:#d1d5db;
+      --accent:#111827; --ok:#16a34a; --warn:#dc2626;
     }
     *{box-sizing:border-box}
     body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
     .wrap{max-width:1180px;margin:0 auto;padding:20px}
-    .hero,.card{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+    .hero,.card{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
     .hero{padding:24px;margin-bottom:18px}
     .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
     .card{padding:20px}
     h1{margin:0 0 8px;font-size:32px}
     h2{margin:0 0 16px;font-size:22px}
-    h3{margin:0 0 12px;font-size:18px}
     .muted{color:var(--muted)}
     label{display:block;margin:10px 0 6px;font-weight:700}
-    input,select,button,textarea{
-      width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--line);font-size:15px;background:#3c4f75;color:#fff
+    input,select,button{
+      width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--line);font-size:15px
     }
-    textarea{min-height:96px;resize:vertical}
-    button{cursor:pointer;background:var(--accent);color:white;border:none;font-weight:700}
+    button{cursor:pointer;background:#111827;color:white;border:none;font-weight:700}
     button.secondary{background:#e5e7eb;color:#111827}
     button.outline{background:white;color:#111827;border:1px solid var(--line)}
-    button.green{background:var(--ok)}
-    button.red{background:var(--warn)}
-    button.yellow{background:var(--yellow);color:#111}
     .row{display:flex;gap:10px;align-items:center}
     .row > *{flex:1}
     .stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
-    .stat{border:1px solid var(--line);border-radius:16px;padding:14px;background:#3c4f75}
+    .stat{border:1px solid var(--line);border-radius:16px;padding:14px}
     .stat .label{font-size:13px;color:var(--muted)}
     .stat .value{font-size:28px;font-weight:700;margin-top:8px}
     .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
     .toolbar button{width:auto}
     .list{display:flex;flex-direction:column;gap:12px;max-height:520px;overflow:auto}
-    .trip{border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;justify-content:space-between;gap:12px;background:#3c4f75}
+    .trip{border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;justify-content:space-between;gap:12px}
     .trip-title{font-weight:700}
     .small{font-size:14px;color:var(--muted);margin-top:4px}
     .status{padding:10px 12px;border-radius:14px;margin-top:10px;font-size:14px}
-    .status.ok{background:#12361f;color:#bcf5cf;border:1px solid #2f8f4f}
-    .status.warn{background:#3d2020;color:#fecaca;border:1px solid #ef4444}
-    .status.info{background:#1e3a5f;color:#bfdbfe;border:1px solid #3b82f6}
+    .status.ok{background:#ecfdf5;color:#166534;border:1px solid #bbf7d0}
+    .status.warn{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
     .login-grid{display:grid;grid-template-columns:1fr 1fr auto auto;gap:10px}
     .danger{background:white;color:#111827;border:1px solid var(--line)}
-    .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#f3f4f6;font-size:12px;color:#111;margin-right:8px}
-    .pill.yellow{background:#facc15}
-    .pill.red{background:#ef4444;color:#fff}
-    .topbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
-    .help-box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:14px;display:none}
-    .tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
-    .tab-btn{width:auto;padding:14px 26px;border-radius:16px;background:#e5e7eb;color:#111;font-weight:700}
-    .tab-btn.active{background:var(--accent);color:#fff}
-    .tab-panel{display:none}
-    .tab-panel.active{display:block}
-    .profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
-    .section{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px}
-    .entry-list{display:flex;flex-direction:column;gap:12px;margin-top:16px}
-    .entry-card{border:1px solid var(--line);background:#3c4f75;border-radius:16px;padding:14px}
-    .hidden{display:none!important}
+    .pill{display:inline-block;padding:4px 8px;border-radius:999px;background:#f3f4f6;font-size:12px}
     @media (max-width: 960px){
-      .grid,.profile-grid{grid-template-columns:1fr}
+      .grid{grid-template-columns:1fr}
       .trip{flex-direction:column}
       .login-grid{grid-template-columns:1fr}
-      .row{flex-direction:column;align-items:stretch}
     }
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="hero">
-      <h1>Spesen von Stil &amp; Struktur</h1>
-      <div class="muted">Beta-Version – Spesen auf Handy und PC. Gleicher Login auf beiden Geräten.</div>
-      <div class="topbar">
-        <span class="pill yellow" id="userBadge">Nicht angemeldet</span>
-        <span class="pill" id="packageBadge">Kein aktiver Zugang</span>
-        <span class="pill red hidden" id="adminBadge">Admin aktiv</span>
-        <button type="button" class="outline" onclick="toggleHelp()">App installieren / Hilfe</button>
-      </div>
+      <h1>Micha Spesen</h1>
+      <div class="muted">Synchronisierte Web-App für Handy und PC. Gleiche Daten auf beiden Geräten.</div>
+      <div class="muted" style="margin-top:8px;">Regel: unter 8 Stunden = 0 €, ab 8 bis unter 24 Stunden = 14 €, pro volle 24 Stunden = 28 €, Rest ab 8 Stunden zusätzlich = 14 €.</div>
       <div id="syncStatus" class="status warn" style="display:none;"></div>
-      <div id="helpBox" class="help-box">
-        <strong>App aufs Handy speichern</strong><br><br>
-        <strong>Android:</strong><br>
-        1. Link aus der Nachricht kopieren<br>
-        2. Chrome öffnen<br>
-        3. Link oben einfügen und öffnen<br>
-        4. Oben rechts auf die 3 Punkte tippen<br>
-        5. „Zum Startbildschirm hinzufügen“ auswählen<br>
-        6. „Installieren“ auswählen<br><br>
-        <strong>iPhone:</strong><br>
-        1. Link in Safari öffnen<br>
-        2. Unten auf Teilen tippen<br>
-        3. „Zum Home-Bildschirm“ auswählen<br>
-        4. Hinzufügen drücken<br><br>
-        <strong>PC:</strong><br>
-        Link einfach im Browser öffnen und mit demselben Konto anmelden.
-      </div>
     </div>
 
     <div class="grid">
-      <div class="card" id="loginCard">
+      <div class="card">
         <h2>Anmeldung</h2>
+
+        <label for="savedEmails">Gespeicherte E-Mail auswählen</label>
+        <div class="row">
+          <select id="savedEmails">
+            <option value="">Bitte auswählen</option>
+          </select>
+          <button type="button" class="outline" onclick="fillSelectedEmail()">Übernehmen</button>
+        </div>
+
         <div class="login-grid" style="margin-top:12px;">
           <input id="email" type="email" placeholder="E-Mail" autocomplete="username">
-          <div class="row" style="gap:8px">
-            <input id="password" type="password" placeholder="Passwort" autocomplete="current-password">
-            <button type="button" class="outline" style="width:auto" onclick="togglePw()">👁</button>
-          </div>
-          <button type="button" class="green" onclick="signInUser()">Anmelden</button>
-          <button type="button" class="yellow" onclick="signUpUser()">Registrieren</button>
+          <input id="password" type="password" placeholder="Passwort" autocomplete="current-password">
+          <button type="button" onclick="signIn()">Anmelden</button>
+          <button type="button" class="outline" onclick="signUp()">Registrieren</button>
         </div>
+
         <div class="toolbar">
-          <button type="button" class="outline" onclick="sendReset()">Passwort vergessen?</button>
-          <button type="button" class="red" onclick="signOutUser()">Abmelden</button>
+          <button type="button" class="outline" onclick="saveCurrentEmail()">E-Mail merken</button>
+          <button type="button" class="outline" onclick="removeSelectedEmail()">Ausgewählte E-Mail löschen</button>
+          <button type="button" class="outline" onclick="signOutUser()">Abmelden</button>
         </div>
+
+        <div class="small">Die App merkt sich nur E-Mail-Adressen. Passwörter werden nicht in der App gespeichert.</div>
+        <div class="small">Passwörter bitte nur über den Browser oder Passwortmanager speichern lassen.</div>
         <div id="authStatus" class="status warn">Noch nicht angemeldet.</div>
       </div>
 
       <div class="card">
         <h2>Monatsübersicht</h2>
+
         <label for="monthSelect">Monat auswählen</label>
         <select id="monthSelect"></select>
+
         <div class="stats">
           <div class="stat">
             <div class="label">Gesamtsumme im Monat</div>
-            <div class="value" id="monthlyTotal">0,00 €</div>
+            <div class="value" id="monthlyTotal">0.00 €</div>
           </div>
           <div class="stat">
             <div class="label">Gesamtzeit im Monat</div>
             <div class="value" id="monthlyHours">0 Std 0 Min</div>
           </div>
         </div>
+
         <div class="stat" style="margin-top:12px;">
           <div class="label">Gesamte gespeicherte Spesen</div>
-          <div class="value" id="overallTotal">0,00 €</div>
+          <div class="value" id="overallTotal">0.00 €</div>
         </div>
+
         <div class="toolbar">
           <button type="button" class="outline" onclick="exportCSV()">Liste exportieren</button>
           <button type="button" onclick="exportPDF()">Als PDF exportieren</button>
@@ -148,156 +121,53 @@
       </div>
     </div>
 
-    <div class="profile-grid">
-      <div class="section">
-        <h3>Fahrerprofil</h3>
-        <label>Name</label>
-        <input id="displayName" placeholder="Vor- und Nachname">
-        <label>E-Mail</label>
-        <input id="profileEmail" placeholder="wird aus dem Login übernommen" readonly>
-        <div id="premiumFields" class="hidden">
-          <label>Firma</label><input id="company" placeholder="Firma">
-          <label>Fahrzeug</label><input id="vehicle" placeholder="Fahrzeug">
-          <label>Kennzeichen</label><input id="plate" placeholder="Kennzeichen">
+    <div class="grid" style="margin-top:18px;">
+      <div class="card">
+        <h2>Fahrt erfassen</h2>
+
+        <label for="tourName">Tour / Bemerkung</label>
+        <input id="tourName" placeholder="z. B. Berlin Tour">
+
+        <label for="startTime">Losgefahren</label>
+        <div class="row">
+          <input id="startTime" type="datetime-local">
+          <button type="button" onclick="setNow('startTime')">Jetzt</button>
         </div>
+
+        <label for="endTime">Angekommen</label>
+        <div class="row">
+          <input id="endTime" type="datetime-local">
+          <button type="button" class="secondary" onclick="setNow('endTime')">Jetzt</button>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="label">Dauer</div>
+            <div class="value" id="durationPreview">0 Std 0 Min</div>
+          </div>
+          <div class="stat">
+            <div class="label">Spesen</div>
+            <div class="value" id="allowancePreview">0.00 €</div>
+          </div>
+        </div>
+
         <div class="toolbar">
-          <button type="button" onclick="saveProfile()">Profil speichern</button>
-          <button type="button" class="yellow" onclick="startTrial()">7 Tage Testzeit starten</button>
+          <button type="button" onclick="saveTrip()">Fahrt speichern</button>
+          <button type="button" class="outline" onclick="clearForm()">Felder leeren</button>
         </div>
-        <div class="small">Basic: Name + E-Mail. Premium/Gold: zusätzlich Firma, Fahrzeug, Kennzeichen.</div>
-        <div id="profileStatus" class="status info">Noch kein Profil geladen.</div>
       </div>
 
-      <div class="section">
-        <h3>Zugang &amp; Laufzeit</h3>
-        <div id="accessInfo" class="status info">Melde dich an, um deine Laufzeit zu sehen.</div>
-        <div class="toolbar">
-          <button type="button" class="outline" onclick="contactAdmin()">Admin kontaktieren</button>
-        </div>
-        <div class="small">Alle starten mit einer 7-tägigen Gold-Testphase. Drei Tage vor Ablauf erscheint ein Hinweis in der App.</div>
+      <div class="card">
+        <h2>Hinweis fürs Handy</h2>
+        <div class="small">Auf Android in Chrome: Menü öffnen → <span class="pill">Zum Startbildschirm hinzufügen</span>.</div>
+        <div class="small" style="margin-top:8px;">Auf iPhone in Safari: Teilen → <span class="pill">Zum Home-Bildschirm</span>.</div>
+        <div class="small" style="margin-top:8px;">Dann hat Micha ein Icon auf dem Handy. Das ist keine Store-App, fühlt sich im Alltag aber fast so an.</div>
       </div>
-    </div>
-
-    <div class="card hidden" id="adminPanel">
-      <h2>Adminbereich</h2>
-      <div class="toolbar">
-        <button type="button" onclick="loadUsers()">Anfragen / Nutzer laden</button>
-      </div>
-      <div id="adminUsersList" class="entry-list"></div>
     </div>
 
     <div class="card" style="margin-top:18px;">
-      <div class="tabs">
-        <button class="tab-btn active" onclick="showTab('fahrt', this)">Fahrt</button>
-        <button class="tab-btn" onclick="showTab('hotel', this)">Hotel</button>
-        <button class="tab-btn" onclick="showTab('tanken', this)">Tanken</button>
-        <button class="tab-btn" onclick="showTab('kilometer', this)">Kilometer</button>
-        <button class="tab-btn" onclick="showTab('pdf', this)">PDF</button>
-        <button class="tab-btn" onclick="showTab('pakete', this)">Pakete</button>
-        <button class="tab-btn" onclick="showTab('empfehlen', this)">Empfehlen</button>
-      </div>
-
-      <div id="fahrt" class="tab-panel active">
-        <h2>Fahrt erfassen</h2>
-        <div class="row">
-          <div>
-            <label>Sortierung</label>
-            <select id="sortTrips"><option value="desc">Jüngstes zuerst</option><option value="asc">Ältestes zuerst</option></select>
-          </div>
-        </div>
-        <label>Tour / Titel</label>
-        <input id="tourName" placeholder="Tour / Titel">
-        <label>Bemerkung</label>
-        <textarea id="tripNote" placeholder="Bemerkung"></textarea>
-        <div class="row">
-          <div>
-            <label>Start</label>
-            <div class="row"><input id="startTime" type="datetime-local"><button type="button" class="green" onclick="setNowTrip('startTime')">Start jetzt</button></div>
-          </div>
-          <div>
-            <label>Ende</label>
-            <div class="row"><input id="endTime" type="datetime-local"><button type="button" class="red" onclick="setNowTrip('endTime')">Ende jetzt</button></div>
-          </div>
-        </div>
-        <div class="stats">
-          <div class="stat"><div class="label">Dauer</div><div class="value" id="durationPreview">0 Std 0 Min</div></div>
-          <div class="stat"><div class="label">Spesen</div><div class="value" id="allowancePreview">0,00 €</div></div>
-        </div>
-        <div class="toolbar">
-          <button type="button" onclick="saveTrip()">Fahrt speichern</button>
-          <button type="button" class="outline" onclick="clearTripForm()">Felder leeren</button>
-        </div>
-        <div id="tripSaveStatus" class="status info">Noch keine Fahrten gespeichert.</div>
-        <div id="tripList" class="entry-list"></div>
-      </div>
-
-      <div id="hotel" class="tab-panel">
-        <h2>Hotel</h2>
-        <div class="row">
-          <div><label>Hotelname / Ort</label><input id="hotelName" placeholder="Hotelname / Ort"></div>
-          <div><label>Preis €</label><input id="hotelPrice" placeholder="Preis €"></div>
-        </div>
-        <div class="row">
-          <div><label>Anreise</label><div class="row"><input id="hotelCheckin" type="datetime-local"><button type="button" class="green" onclick="setNowTrip('hotelCheckin')">Start jetzt</button></div></div>
-          <div><label>Abreise</label><div class="row"><input id="hotelCheckout" type="datetime-local"><button type="button" class="red" onclick="setNowTrip('hotelCheckout')">Ende jetzt</button></div></div>
-        </div>
-        <div class="row">
-          <div><label>Nächte</label><input id="hotelNights" placeholder="Nächte"></div>
-          <div><label>Beleg-Sortierung</label><select id="sortHotels"><option value="desc">Jüngstes zuerst</option><option value="asc">Ältestes zuerst</option></select></div>
-        </div>
-        <label>Bemerkung / Zweck</label><textarea id="hotelNote"></textarea>
-        <div class="toolbar"><button type="button" onclick="saveHotel()">Hotel speichern</button><button type="button" class="outline" onclick="clearHotelForm()">Felder leeren</button></div>
-        <div id="hotelSaveStatus" class="status info">Noch keine Hotels gespeichert.</div>
-        <div id="hotelList" class="entry-list"></div>
-      </div>
-
-      <div id="tanken" class="tab-panel">
-        <h2>Tanken</h2>
-        <div class="row">
-          <div><label>Tankstelle / Ort</label><input id="fuelStation" placeholder="Tankstelle / Ort"></div>
-          <div><label>Betrag €</label><input id="fuelAmount" placeholder="Betrag €"></div>
-        </div>
-        <div class="row">
-          <div><label>Datum</label><div class="row"><input id="fuelDate" type="date"><button type="button" class="green" onclick="setToday('fuelDate')">Datum jetzt</button></div></div>
-          <div><label>Uhrzeit</label><div class="row"><input id="fuelTime" type="time"><button type="button" class="red" onclick="setCurrentTime('fuelTime')">Uhrzeit jetzt</button></div></div>
-        </div>
-        <div class="row">
-          <div><label>Liter</label><input id="fuelLiters" placeholder="Liter"></div>
-          <div><label>Spritart</label><input id="fuelType" placeholder="Spritart"></div>
-        </div>
-        <div class="row"><div><label>Preis / Liter</label><input id="fuelPricePerLiter" placeholder="Preis / Liter"></div><div><label>Beleg-Sortierung</label><select id="sortFuel"><option value="desc">Jüngstes zuerst</option><option value="asc">Ältestes zuerst</option></select></div></div>
-        <label>Bemerkung</label><textarea id="fuelNote"></textarea>
-        <div class="toolbar"><button type="button" onclick="saveFuel()">Tanken speichern</button><button type="button" class="outline" onclick="clearFuelForm()">Felder leeren</button></div>
-        <div id="fuelSaveStatus" class="status info">Noch keine Tankeinträge gespeichert.</div>
-        <div id="fuelList" class="entry-list"></div>
-      </div>
-
-      <div id="kilometer" class="tab-panel">
-        <h2>Kilometer</h2>
-        <div class="row"><div><label>Strecke / Zweck</label><input id="kmPurpose" placeholder="Strecke / Zweck"></div><div><label>Datum</label><input id="kmDate" type="date"></div></div>
-        <label>Kilometer</label><input id="kmValue" placeholder="Kilometer">
-        <label>Bemerkung</label><textarea id="kmNote"></textarea>
-        <div class="toolbar"><button type="button" onclick="saveKm()">Kilometer speichern</button><button type="button" class="outline" onclick="clearKmForm()">Felder leeren</button></div>
-        <div id="kmSaveStatus" class="status info">Noch keine Kilometer gespeichert.</div>
-        <div id="kmList" class="entry-list"></div>
-      </div>
-
-      <div id="pdf" class="tab-panel">
-        <h2>PDF-Export</h2>
-        <div class="small">Nutze oben die Monatsauswahl und exportiere dann deine Daten als CSV oder PDF.</div>
-      </div>
-
-      <div id="pakete" class="tab-panel">
-        <h2>Pakete</h2>
-        <div class="small">Paketlogik kommt als nächster sauberer Schritt oben auf diesen stabilen Stand.</div>
-      </div>
-
-      <div id="empfehlen" class="tab-panel">
-        <h2>Fahrer empfehlen</h2>
-        <div class="small">Wenn ein neuer Fahrer über deinen Empfehlungscode kommt und später kostenpflichtig freigeschaltet wird, bekommst du 7 Tage gratis dazu.</div>
-        <label>Dein Empfehlungscode</label>
-        <input id="refCode" readonly>
-      </div>
+      <h2>Fahrten im ausgewählten Monat</h2>
+      <div id="tripList" class="list"></div>
     </div>
   </div>
 
@@ -308,11 +178,7 @@
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     signOut,
-    onAuthStateChanged,
-    sendPasswordResetEmail,
-    setPersistence,
-    browserLocalPersistence,
-    browserSessionPersistence
+    onAuthStateChanged
   } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js';
   import {
     getFirestore,
@@ -324,91 +190,247 @@
     updateDoc,
     deleteDoc,
     doc,
-    serverTimestamp,
-    getDoc,
-    setDoc,
-    getDocs
+    serverTimestamp
   } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js';
 
+  // [1000] Firebase unverändert
   const firebaseConfig = {
-    apiKey: "AIzaSyCsqrNPEtKCaDe5vywUIoM9fK-vXqV_sr4",
-    authDomain: "spesen-test-31a53.firebaseapp.com",
-    projectId: "spesen-test-31a53",
-    storageBucket: "spesen-test-31a53.firebasestorage.app",
-    messagingSenderId: "722110907370",
-    appId: "1:722110907370:web:6d1253fb66f02fe4b76893"
+    apiKey: "AIzaSyCBXgseuSjsviWSq3c3SJv0-__8IFUTEWw",
+    authDomain: "micha-spesen.firebaseapp.com",
+    projectId: "micha-spesen",
+    storageBucket: "micha-spesen.firebasestorage.app",
+    messagingSenderId: "877124543127",
+    appId: "1:877124543127:web:56b36e85454b0805883fd2"
   };
 
-  const ADMIN_EMAIL = 'tanjapischke177@gmail.com';
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+  // [1010] Grundvariablen
+  const isConfigured = !Object.values(firebaseConfig).some(v => String(v).startsWith("HIER_"));
+  const syncStatus = document.getElementById("syncStatus");
+  const authStatus = document.getElementById("authStatus");
+  const monthSelect = document.getElementById("monthSelect");
+  const savedEmailsSelect = document.getElementById("savedEmails");
+  const SAVED_EMAILS_KEY = "michaSpesenSavedEmails";
 
-  const $ = (id) => document.getElementById(id);
+  let app = null;
+  let auth = null;
+  let db = null;
   let currentUser = null;
   let trips = [];
-  let hotels = [];
-  let fuels = [];
-  let kms = [];
-  let profile = { displayName:'', packageName:'Standard', activeUntil:'', company:'', vehicle:'', plate:'', referralCode:'' };
-  let unsubTrips = null, unsubHotels = null, unsubFuels = null, unsubKms = null;
+  let unsubscribeTrips = null;
 
-  function toggleHelp(){ $('helpBox').style.display = $('helpBox').style.display === 'block' ? 'none' : 'block'; }
-  window.toggleHelp = toggleHelp;
-  function showTab(tabId, btn){
-    document.querySelectorAll('.tab-panel').forEach(el => el.classList.remove('active'));
-    document.getElementById(tabId).classList.add('active');
-    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-    if(btn) btn.classList.add('active');
+  // [1100] Firebase Start
+  if (!isConfigured) {
+    syncStatus.style.display = "block";
+    syncStatus.className = "status warn";
+    syncStatus.textContent = "Firebase ist noch nicht eingetragen. Erst die Werte in index.html einsetzen, dann klappt die Synchronisation.";
+  } else {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+
+    onAuthStateChanged(auth, (user) => {
+      currentUser = user || null;
+
+      if (user) {
+        authStatus.className = "status ok";
+        authStatus.textContent = `Angemeldet als ${user.email}`;
+        syncStatus.style.display = "block";
+        syncStatus.className = "status ok";
+        syncStatus.textContent = "Synchronisation aktiv.";
+        saveEmailAddress(user.email);
+        subscribeTrips();
+      } else {
+        authStatus.className = "status warn";
+        authStatus.textContent = "Noch nicht angemeldet.";
+        syncStatus.style.display = "block";
+        syncStatus.className = "status warn";
+        syncStatus.textContent = "Nicht synchronisiert. Bitte anmelden.";
+        trips = [];
+        if (unsubscribeTrips) unsubscribeTrips();
+        unsubscribeTrips = null;
+        render();
+      }
+    });
   }
-  window.showTab = showTab;
-  function togglePw(){ $('password').type = $('password').type === 'password' ? 'text' : 'password'; }
-  window.togglePw = togglePw;
-  function isAdmin(){ return !!currentUser && (currentUser.email || '').toLowerCase() === ADMIN_EMAIL; }
-  function escapeHtml(text) {
-    return String(text || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+
+  // [1200] Gespeicherte E-Mails
+  function getSavedEmails() {
+    try {
+      const raw = localStorage.getItem(SAVED_EMAILS_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed.filter(Boolean) : [];
+    } catch {
+      return [];
+    }
   }
+
+  function setSavedEmails(emails) {
+    const cleanEmails = [...new Set(emails.map(e => String(e).trim()).filter(Boolean))];
+    localStorage.setItem(SAVED_EMAILS_KEY, JSON.stringify(cleanEmails));
+  }
+
+  function saveEmailAddress(email) {
+    const cleanEmail = String(email || "").trim();
+    if (!cleanEmail) return;
+    const emails = getSavedEmails();
+    const newEmails = [cleanEmail, ...emails.filter(e => e !== cleanEmail)];
+    setSavedEmails(newEmails);
+    renderSavedEmailsDropdown(cleanEmail);
+  }
+
+  function removeEmailAddress(email) {
+    const cleanEmail = String(email || "").trim();
+    if (!cleanEmail) return;
+    const emails = getSavedEmails().filter(e => e !== cleanEmail);
+    setSavedEmails(emails);
+    renderSavedEmailsDropdown();
+  }
+
+  function renderSavedEmailsDropdown(selectedEmail = "") {
+    const emails = getSavedEmails();
+    const options = ['<option value="">Bitte auswählen</option>']
+      .concat(emails.map(email => `<option value="${escapeHtml(email)}">${escapeHtml(email)}</option>`));
+
+    savedEmailsSelect.innerHTML = options.join("");
+
+    if (selectedEmail && emails.includes(selectedEmail)) {
+      savedEmailsSelect.value = selectedEmail;
+    }
+  }
+
+  window.fillSelectedEmail = function fillSelectedEmail() {
+    const selectedEmail = savedEmailsSelect.value;
+    if (!selectedEmail) return;
+    document.getElementById("email").value = selectedEmail;
+  };
+
+  window.saveCurrentEmail = function saveCurrentEmail() {
+    const email = document.getElementById("email").value.trim();
+    if (!email) return alert("Bitte zuerst eine E-Mail eintragen.");
+    saveEmailAddress(email);
+    savedEmailsSelect.value = email;
+    alert("E-Mail wurde gemerkt.");
+  };
+
+  window.removeSelectedEmail = function removeSelectedEmail() {
+    const selectedEmail = savedEmailsSelect.value;
+    if (!selectedEmail) return alert("Bitte zuerst eine gespeicherte E-Mail auswählen.");
+    if (!confirm(`Diese gespeicherte E-Mail entfernen?\n\n${selectedEmail}`)) return;
+    removeEmailAddress(selectedEmail);
+    if (document.getElementById("email").value.trim() === selectedEmail) {
+      document.getElementById("email").value = "";
+    }
+  };
+
+  // [1300] Anmeldung
+  window.signUp = async function signUp() {
+    if (!auth) return alert("Firebase-Konfiguration fehlt.");
+
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    if (!email || !password) return alert("Bitte E-Mail und Passwort eingeben.");
+
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      saveEmailAddress(email);
+    } catch (e) {
+      alert("Registrierung fehlgeschlagen: " + e.message);
+    }
+  };
+
+  window.signIn = async function signIn() {
+    if (!auth) return alert("Firebase-Konfiguration fehlt.");
+
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    if (!email || !password) return alert("Bitte E-Mail und Passwort eingeben.");
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      saveEmailAddress(email);
+    } catch (e) {
+      alert("Anmeldung fehlgeschlagen: " + e.message);
+    }
+  };
+
+  window.signOutUser = async function signOutUser() {
+    if (!auth) return;
+    await signOut(auth);
+  };
+
+  // [1400] Daten laden
+  function subscribeTrips() {
+    if (!currentUser || !db) return;
+    if (unsubscribeTrips) unsubscribeTrips();
+
+    const tripsRef = collection(db, "users", currentUser.uid, "trips");
+    const q = query(tripsRef, orderBy("startTime", "asc"));
+
+    unsubscribeTrips = onSnapshot(q, (snapshot) => {
+      trips = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      render();
+    }, (error) => {
+      syncStatus.style.display = "block";
+      syncStatus.className = "status warn";
+      syncStatus.textContent = "Fehler bei der Synchronisation: " + error.message;
+    });
+  }
+
+  // [1500] Hilfsfunktionen
   function formatDateTimeLocal(date) {
-    const pad = (n) => String(n).padStart(2, '0');
+    const pad = (n) => String(n).padStart(2, "0");
     return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
   }
-  function formatLocalDate(date){
-    const d = new Date(date.getTime() - date.getTimezoneOffset()*60000);
-    return d.toISOString().slice(0,10);
-  }
+
   function parseLocalDateTime(dateTimeString) {
     if (!dateTimeString) return null;
-    const normalized = String(dateTimeString).trim().replace(' ', 'T');
-    const [datePart = '', timePart = '00:00'] = normalized.split('T');
-    const [year, month, day] = datePart.split('-').map(Number);
-    const [hour = 0, minute = 0] = timePart.split(':').map(Number);
+    const normalized = String(dateTimeString).trim().replace(" ", "T");
+    const [datePart = "", timePart = "00:00"] = normalized.split("T");
+    const [year, month, day] = datePart.split("-").map(Number);
+    const [hour = 0, minute = 0] = timePart.split(":").map(Number);
+
     if (!year || !month || !day) return null;
     return new Date(year, month - 1, day, hour || 0, minute || 0, 0, 0);
   }
+
   function formatGermanDate(dateString) {
     const d = parseLocalDateTime(dateString);
-    if (!d) return '-';
-    return d.toLocaleString('de-DE', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+    if (!d) return "-";
+    return d.toLocaleString("de-DE", {
+      day:"2-digit",
+      month:"2-digit",
+      year:"numeric",
+      hour:"2-digit",
+      minute:"2-digit"
+    });
   }
+
   function formatMonthKey(dateString) {
     const d = parseLocalDateTime(dateString);
-    if (!d) return '';
-    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    if (!d) return "";
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
   }
+
   function formatMonthLabel(monthKey) {
-    if (!monthKey) return 'Kein Monat';
-    const [year, month] = monthKey.split('-');
+    if (!monthKey) return "Kein Monat";
+    const [year, month] = monthKey.split("-");
     const d = new Date(Number(year), Number(month)-1, 1);
-    return d.toLocaleDateString('de-DE', {month:'long', year:'numeric'});
+    return d.toLocaleDateString("de-DE", {month:"long", year:"numeric"});
   }
+
   function calculateDurationHours(start, end) {
     const startDate = parseLocalDateTime(start);
     const endDate = parseLocalDateTime(end);
     if (!startDate || !endDate) return 0;
+
     const diffMs = endDate.getTime() - startDate.getTime();
     if (Number.isNaN(diffMs) || diffMs <= 0) return 0;
+
     return diffMs / (1000 * 60 * 60);
   }
+
   function calculateAllowance(hours) {
     if (hours < 8) return 0;
     const fullDays = Math.floor(hours / 24);
@@ -417,336 +439,369 @@
     if (remainingHours >= 8) total += 14;
     return total;
   }
+
   function getAllowanceType(amount) {
-    if (amount === 0) return '0 €';
-    if (amount === 14) return '14 €';
-    if (amount === 28) return '28 €';
+    if (amount === 0) return "0 €";
+    if (amount === 14) return "14 €";
+    if (amount === 28) return "28 €";
     if (amount % 28 === 0) return `${amount} € (24h-Blöcke)`;
     if (amount > 28) return `${amount} € (24h + Rest)`;
     return `${amount} €`;
   }
+
   function formatDuration(hours) {
-    const totalMinutes = Math.round(Number(hours||0) * 60);
+    const totalMinutes = Math.round(hours * 60);
     const h = Math.floor(totalMinutes / 60);
     const m = totalMinutes % 60;
     return `${h} Std ${m} Min`;
   }
-  function formatEuro(v){ return Number(v||0).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' €'; }
-  function parseNumber(v){
-    const cleaned = String(v ?? '').replace(/\./g,'').replace(',', '.').replace(/[^\d.-]/g,'');
-    const n = Number(cleaned);
-    return Number.isFinite(n) ? n : 0;
-  }
-  function toSortableTimestamp(dateTimeString) {
-    const d = parseLocalDateTime(dateTimeString);
-    return d ? d.getTime() : 0;
-  }
-  function localStatus(id, text, cls='info'){ const el=$(id); el.className='status '+cls; el.textContent=text; }
-  function selectedMonth(){ return $('monthSelect').value; }
-  function computeRefCode(name,email){
-    const base = (name || email || 'fahrer').toLowerCase().replace(/[^a-z0-9äöüß]/gi,'').slice(0,10) || 'fahrer';
-    return `${base}-001`;
-  }
-  function updateBadges(){
-    if(!currentUser){
-      $('userBadge').textContent='Nicht angemeldet';
-      $('packageBadge').textContent='Kein aktiver Zugang';
-      $('adminBadge').classList.add('hidden');
-      $('authStatus').className='status warn';
-      $('authStatus').textContent='Noch nicht angemeldet.';
-      return;
-    }
-    $('userBadge').textContent = currentUser.email;
-    $('packageBadge').textContent = profile.packageName || 'Standard';
-    $('adminBadge').classList.toggle('hidden', !isAdmin());
-    $('authStatus').className='status ok';
-    $('authStatus').textContent=`Angemeldet als ${currentUser.email}`;
-  }
-  function updateProfileUi(){
-    $('profileEmail').value = currentUser?.email || '';
-    $('displayName').value = profile.displayName || '';
-    $('company').value = profile.company || '';
-    $('vehicle').value = profile.vehicle || '';
-    $('plate').value = profile.plate || '';
-    $('refCode').value = profile.referralCode || computeRefCode(profile.displayName,currentUser?.email);
-    const showPremium = ['Premium','Goldmitglied'].includes(profile.packageName);
-    $('premiumFields').classList.toggle('hidden', !showPremium);
-    if(profile.activeUntil){
-      $('accessInfo').className='status info';
-      $('accessInfo').textContent=`Aktiv: ${profile.packageName} bis ${profile.activeUntil}`;
-    }else{
-      $('accessInfo').className='status info';
-      $('accessInfo').textContent='Noch keine Laufzeit aktiv.';
-    }
-  }
-  function setNowTrip(id){ $(''+id).value = formatDateTimeLocal(new Date()); if(id==='startTime'||id==='endTime') updatePreview(); if(id==='hotelCheckin'||id==='hotelCheckout') calcHotelNights(); }
-  window.setNowTrip = setNowTrip;
-  function setToday(id){ $(id).value = formatLocalDate(new Date()); }
-  window.setToday = setToday;
-  function setCurrentTime(id){ const d=new Date(); $(id).value = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; }
-  window.setCurrentTime = setCurrentTime;
-  function updatePreview() {
-    const start = $('startTime').value;
-    const end = $('endTime').value;
-    const hours = (start && end) ? calculateDurationHours(start, end) : 0;
-    const allowance = calculateAllowance(hours);
-    $('durationPreview').textContent = formatDuration(hours);
-    $('allowancePreview').textContent = formatEuro(allowance);
-  }
-  function calcHotelNights(){
-    const start = parseLocalDateTime($('hotelCheckin').value);
-    const end = parseLocalDateTime($('hotelCheckout').value);
-    if(!start || !end){ $('hotelNights').value=''; return; }
-    const diff = Math.round((end - start)/86400000);
-    $('hotelNights').value = diff > 0 ? String(diff) : '0';
-  }
-  function clearTripForm(){ $('tourName').value=''; $('startTime').value=''; $('endTime').value=''; $('tripNote').value=''; updatePreview(); }
-  window.clearTripForm = clearTripForm;
-  function clearHotelForm(){ $('hotelName').value=''; $('hotelPrice').value=''; $('hotelCheckin').value=''; $('hotelCheckout').value=''; $('hotelNights').value=''; $('hotelNote').value=''; }
-  window.clearHotelForm = clearHotelForm;
-  function clearFuelForm(){ $('fuelStation').value=''; $('fuelAmount').value=''; $('fuelDate').value=formatLocalDate(new Date()); $('fuelTime').value=''; $('fuelLiters').value=''; $('fuelType').value=''; $('fuelPricePerLiter').value=''; $('fuelNote').value=''; }
-  window.clearFuelForm = clearFuelForm;
-  function clearKmForm(){ $('kmPurpose').value=''; $('kmDate').value=formatLocalDate(new Date()); $('kmValue').value=''; $('kmNote').value=''; }
-  window.clearKmForm = clearKmForm;
-  async function signUpUser(){
-    const email=$('email').value.trim(); const password=$('password').value;
-    if(!email || !password) return alert('Bitte E-Mail und Passwort eingeben.');
-    try{
-      await setPersistence(auth, $('stayLoggedIn')?.checked ? browserLocalPersistence : browserSessionPersistence);
-      await createUserWithEmailAndPassword(auth,email,password);
-      localStatus('authStatus','Registrierung erfolgreich.','ok');
-    }catch(e){ alert('Registrierung fehlgeschlagen: '+e.message); }
-  }
-  window.signUpUser = signUpUser;
-  async function signInUser(){
-    const email=$('email').value.trim(); const password=$('password').value;
-    if(!email || !password) return alert('Bitte E-Mail und Passwort eingeben.');
-    try{
-      await setPersistence(auth, $('stayLoggedIn')?.checked ? browserLocalPersistence : browserSessionPersistence);
-      await signInWithEmailAndPassword(auth,email,password);
-    }catch(e){ alert('Anmeldung fehlgeschlagen: '+e.message); }
-  }
-  window.signInUser = signInUser;
-  async function signOutUser(){ await signOut(auth); }
-  window.signOutUser = signOutUser;
-  async function sendReset(){ const email=$('email').value.trim(); if(!email) return alert('Bitte zuerst eine E-Mail eintragen.'); try{ await sendPasswordResetEmail(auth,email); alert('Reset-Link wurde gesendet.'); }catch(e){ alert('Reset fehlgeschlagen: '+e.message); } }
-  window.sendReset = sendReset;
-  async function loadProfile(){
-    if(!currentUser) return;
-    try{
-      const ref = doc(db,'users',currentUser.uid,'meta','profile');
-      const snap = await getDoc(ref);
-      if(snap.exists()){
-        profile = { displayName:'', packageName:'Standard', activeUntil:'', company:'', vehicle:'', plate:'', referralCode:'', ...snap.data() };
-      }else{
-        profile = { displayName:'', packageName:'Standard', activeUntil:'', company:'', vehicle:'', plate:'', referralCode: computeRefCode('',currentUser.email) };
-        await setDoc(ref, profile, {merge:true});
-      }
-      updateProfileUi();
-      localStatus('profileStatus','Profil geladen.','ok');
-      await setDoc(doc(db,'profiles',currentUser.uid), { email: currentUser.email, displayName: profile.displayName || '', packageName: profile.packageName || 'Standard', activeUntil: profile.activeUntil || '', updatedAt: Date.now() }, {merge:true});
-    }catch(e){
-      localStatus('profileStatus','Profil konnte nicht sauber geladen werden.','warn');
-    }
-  }
-  async function saveProfile(){
-    if(!currentUser) return alert('Bitte zuerst anmelden.');
-    try{
-      profile.displayName = $('displayName').value.trim();
-      profile.company = $('company').value.trim();
-      profile.vehicle = $('vehicle').value.trim();
-      profile.plate = $('plate').value.trim();
-      profile.referralCode = computeRefCode(profile.displayName,currentUser.email);
-      await setDoc(doc(db,'users',currentUser.uid,'meta','profile'), profile, {merge:true});
-      await setDoc(doc(db,'profiles',currentUser.uid), { email: currentUser.email, displayName: profile.displayName || '', packageName: profile.packageName || 'Standard', activeUntil: profile.activeUntil || '', updatedAt: Date.now() }, {merge:true});
-      updateProfileUi(); updateBadges();
-      localStatus('profileStatus','Profil gespeichert.','ok');
-    }catch(e){ localStatus('profileStatus','Profil konnte nicht gespeichert werden.','warn'); }
-  }
-  window.saveProfile = saveProfile;
-  async function startTrial(){
-    if(!currentUser) return alert('Bitte zuerst anmelden.');
-    const now = new Date();
-    const end = new Date(now.getTime() + 7*24*60*60*1000);
-    const endStr = formatLocalDate(end);
-    profile.packageName='Goldmitglied';
-    profile.activeUntil=endStr;
-    await setDoc(doc(db,'users',currentUser.uid,'meta','profile'), profile, {merge:true});
-    updateBadges(); updateProfileUi();
-    localStatus('profileStatus',`7 Tage Test gestartet bis ${endStr}.`,'ok');
-  }
-  window.startTrial = startTrial;
-  function contactAdmin(){ window.location.href = 'mailto:Tanjapischke177@gmail.com?subject=Frage%20zur%20Spesen-App'; }
-  window.contactAdmin = contactAdmin;
-  function getSortedByOrder(source, field, order){
-    const arr = [...source].sort((a,b)=> toSortableTimestamp(a[field]) - toSortableTimestamp(b[field]));
-    return order==='desc' ? arr.reverse() : arr;
-  }
-  function selectedTrips(){ const month=selectedMonth(); return trips.filter(t=>formatMonthKey(t.startTime)===month); }
-  function renderMonthSelect(){
-    const current = $('monthSelect').value;
-    const keys = [...new Set([...trips.map(t=>formatMonthKey(t.startTime)), ...hotels.map(h=>formatMonthKey(h.checkin)), ...fuels.map(f=>formatMonthKey(`${f.date}T${f.time||'00:00'}`)), ...kms.map(k=>k.date?.slice(0,7))].filter(Boolean))].sort((a,b)=>b.localeCompare(a));
-    if(!keys.length){ const month = formatMonthKey(formatDateTimeLocal(new Date())); $('monthSelect').innerHTML=`<option value="${month}">${formatMonthLabel(month)}</option>`; return; }
-    $('monthSelect').innerHTML = keys.map(m=>`<option value="${m}">${formatMonthLabel(m)}</option>`).join('');
-    $('monthSelect').value = keys.includes(current) ? current : keys[0];
-  }
-  function renderTrips(){
-    const month = selectedMonth();
-    const order = $('sortTrips').value;
-    const monthly = getSortedByOrder(trips.filter(t=>formatMonthKey(t.startTime)===month),'startTime',order).map((trip,idx)=>({...trip, displayNumber: idx+1}));
-    const total = monthly.reduce((s,t)=>s+Number(t.allowance||0),0);
-    const hours = monthly.reduce((s,t)=>s+Number(t.hours||0),0);
-    $('monthlyTotal').textContent = formatEuro(total + hotels.filter(h=>formatMonthKey(h.checkin)===month).reduce((s,h)=>s+Number(h.price||0),0) + fuels.filter(f=>(f.date||'').slice(0,7)===month).reduce((s,f)=>s+Number(f.amount||0),0));
-    $('monthlyHours').textContent = formatDuration(hours);
-    $('overallTotal').textContent = formatEuro(trips.reduce((s,t)=>s+Number(t.allowance||0),0) + hotels.reduce((s,h)=>s+Number(h.price||0),0) + fuels.reduce((s,f)=>s+Number(f.amount||0),0));
-    $('tripList').innerHTML = monthly.length ? monthly.map(trip => `
-      <div class="entry-card">
-        <div class="trip-title">Nr. ${trip.displayNumber} – ${escapeHtml(trip.tourName)}</div>
-        <div class="small">${formatGermanDate(trip.startTime)} → ${formatGermanDate(trip.endTime)}</div>
-        <div class="small">Dauer: ${formatDuration(Number(trip.hours||0))}</div>
-        <div class="small">Spesensatz: ${escapeHtml(trip.allowanceType || '')}</div>
-        <div class="small">Spesen: ${formatEuro(trip.allowance||0)}</div>
-        ${trip.note ? `<div class="small">${escapeHtml(trip.note)}</div>` : ''}
-        <div class="toolbar"><button type="button" class="outline" onclick="editTrip('${trip.id}')">Bearbeiten</button><button type="button" class="danger" onclick="deleteTrip('${trip.id}')">Löschen</button></div>
-      </div>`).join('') : '<div class="muted">Keine Fahrten in diesem Monat gespeichert.</div>';
-    localStatus('tripSaveStatus', monthly.length ? `${monthly.length} Fahrt(en) im ausgewählten Monat.` : 'Noch keine Fahrten gespeichert.', monthly.length ? 'ok':'info');
-  }
-  function renderHotels(){
-    const month=selectedMonth(); const order=$('sortHotels').value;
-    const monthly=getSortedByOrder(hotels.filter(h=>formatMonthKey(h.checkin)===month),'checkin',order);
-    $('hotelList').innerHTML = monthly.length ? monthly.map(h=>`<div class="entry-card"><div class="trip-title">${escapeHtml(h.name)}</div><div class="small">${formatGermanDate(h.checkin)} → ${formatGermanDate(h.checkout)}</div><div class="small">Nächte: ${escapeHtml(h.nights)}</div><div class="small">Preis: ${formatEuro(h.price||0)}</div>${h.note ? `<div class="small">${escapeHtml(h.note)}</div>`:''}</div>`).join('') : '<div class="muted">Keine Hotels in diesem Monat gespeichert.</div>';
-    localStatus('hotelSaveStatus', monthly.length ? `${monthly.length} Hotel-Eintrag/Eingänge im Monat.` : 'Noch keine Hotels gespeichert.', monthly.length ? 'ok':'info');
-  }
-  function renderFuels(){
-    const month=selectedMonth(); const order=$('sortFuel').value;
-    const monthly=getSortedByOrder(fuels.filter(f=>(f.date||'').slice(0,7)===month),'date',order);
-    $('fuelList').innerHTML = monthly.length ? monthly.map(f=>`<div class="entry-card"><div class="trip-title">${escapeHtml(f.station)}</div><div class="small">${escapeHtml(f.date)} ${escapeHtml(f.time||'')}</div><div class="small">Liter: ${escapeHtml(f.liters)}</div><div class="small">Preis: ${formatEuro(f.amount||0)}</div>${f.note ? `<div class="small">${escapeHtml(f.note)}</div>`:''}</div>`).join('') : '<div class="muted">Keine Tankeinträge in diesem Monat gespeichert.</div>';
-    localStatus('fuelSaveStatus', monthly.length ? `${monthly.length} Tankeinträge im Monat.` : 'Noch keine Tankeinträge gespeichert.', monthly.length ? 'ok':'info');
-  }
-  function renderKms(){
-    const month=selectedMonth(); const monthly=kms.filter(k=>(k.date||'').slice(0,7)===month).sort((a,b)=>a.date.localeCompare(b.date));
-    $('kmList').innerHTML = monthly.length ? monthly.map(k=>`<div class="entry-card"><div class="trip-title">${escapeHtml(k.purpose)}</div><div class="small">${escapeHtml(k.date)}</div><div class="small">Kilometer: ${escapeHtml(k.kilometers)}</div>${k.note ? `<div class="small">${escapeHtml(k.note)}</div>`:''}</div>`).join('') : '<div class="muted">Keine Kilometer in diesem Monat gespeichert.</div>';
-    localStatus('kmSaveStatus', monthly.length ? `${monthly.length} Kilometer-Einträge im Monat.` : 'Noch keine Kilometer gespeichert.', monthly.length ? 'ok':'info');
-  }
-  function renderAll(){ renderMonthSelect(); renderTrips(); renderHotels(); renderFuels(); renderKms(); updatePreview(); calcHotelNights(); }
-  async function saveTrip(){
-    if(!currentUser) return alert('Bitte zuerst anmelden.');
-    const tourName = ($('tourName').value || '').trim() || 'Fahrt';
-    const start = $('startTime').value;
-    const end = $('endTime').value;
-    const note = ($('tripNote').value||'').trim();
-    if(!start || !end) return alert('Bitte Start und Ende eintragen.');
-    const hours = calculateDurationHours(start,end);
-    if(hours <= 0) return alert('Ende muss nach dem Start liegen.');
-    const allowance = calculateAllowance(hours);
-    await addDoc(collection(db,'users',currentUser.uid,'trips'), { tripNumber: 0, tourName, note, startTime:start, endTime:end, hours, allowance, allowanceType:getAllowanceType(allowance), createdAt: serverTimestamp() });
-    clearTripForm();
-    localStatus('tripSaveStatus','Fahrt gespeichert.','ok');
-  }
-  window.saveTrip = saveTrip;
-  async function saveHotel(){
-    if(!currentUser) return alert('Bitte zuerst anmelden.');
-    const name=$('hotelName').value.trim(); const price=parseNumber($('hotelPrice').value); const checkin=$('hotelCheckin').value; const checkout=$('hotelCheckout').value; const nights=parseNumber($('hotelNights').value); const note=$('hotelNote').value.trim();
-    if(!name || !price || !checkin) return alert('Bitte Hotelname, Preis und Anreise eintragen.');
-    await addDoc(collection(db,'users',currentUser.uid,'hotels'), { name, price, checkin, checkout, nights, note, createdAt: serverTimestamp() });
-    clearHotelForm(); localStatus('hotelSaveStatus','Hotel gespeichert.','ok');
-  }
-  window.saveHotel = saveHotel;
-  async function saveFuel(){
-    if(!currentUser) return alert('Bitte zuerst anmelden.');
-    const station=$('fuelStation').value.trim(); const amount=parseNumber($('fuelAmount').value); const date=$('fuelDate').value; const time=$('fuelTime').value; const liters=parseNumber($('fuelLiters').value); const fuelType=$('fuelType').value.trim(); const pricePerLiter=parseNumber($('fuelPricePerLiter').value); const note=$('fuelNote').value.trim();
-    if(!station || !amount || !date) return alert('Bitte Tankstelle, Betrag und Datum eintragen.');
-    await addDoc(collection(db,'users',currentUser.uid,'fuels'), { station, amount, date, time, liters, fuelType, pricePerLiter, note, createdAt: serverTimestamp() });
-    clearFuelForm(); localStatus('fuelSaveStatus','Tanken gespeichert.','ok');
-  }
-  window.saveFuel = saveFuel;
-  async function saveKm(){
-    if(!currentUser) return alert('Bitte zuerst anmelden.');
-    const purpose=$('kmPurpose').value.trim(); const date=$('kmDate').value; const kilometers=parseNumber($('kmValue').value); const note=$('kmNote').value.trim();
-    if(!purpose || !date || !kilometers) return alert('Bitte Zweck, Datum und Kilometer eintragen.');
-    await addDoc(collection(db,'users',currentUser.uid,'kms'), { purpose, date, kilometers, note, createdAt: serverTimestamp() });
-    clearKmForm(); localStatus('kmSaveStatus','Kilometer gespeichert.','ok');
-  }
-  window.saveKm = saveKm;
-  async function editTrip(id){ const trip = trips.find(t=>t.id===id); if(!trip) return; const newTour = prompt('Tour / Bemerkung', trip.tourName); if(newTour===null) return; await updateDoc(doc(db,'users',currentUser.uid,'trips',id), {tourName:newTour.trim()||'Fahrt'}); }
-  window.editTrip = editTrip;
-  async function deleteTrip(id){ if(!confirm('Diese Fahrt wirklich löschen?')) return; await deleteDoc(doc(db,'users',currentUser.uid,'trips',id)); }
-  window.deleteTrip = deleteTrip;
-  function subscribeAll(){
-    if(unsubTrips) unsubTrips(); if(unsubHotels) unsubHotels(); if(unsubFuels) unsubFuels(); if(unsubKms) unsubKms();
-    if(!currentUser) return;
-    unsubTrips = onSnapshot(query(collection(db,'users',currentUser.uid,'trips'), orderBy('startTime','asc')), snap=>{ trips=snap.docs.map(d=>({id:d.id,...d.data()})); renderAll(); }, err=> $('syncStatus').textContent='Fahrten Sync-Fehler: '+err.message);
-    unsubHotels = onSnapshot(query(collection(db,'users',currentUser.uid,'hotels'), orderBy('checkin','asc')), snap=>{ hotels=snap.docs.map(d=>({id:d.id,...d.data()})); renderAll(); }, ()=>{});
-    unsubFuels = onSnapshot(query(collection(db,'users',currentUser.uid,'fuels'), orderBy('date','asc')), snap=>{ fuels=snap.docs.map(d=>({id:d.id,...d.data()})); renderAll(); }, ()=>{});
-    unsubKms = onSnapshot(query(collection(db,'users',currentUser.uid,'kms'), orderBy('date','asc')), snap=>{ kms=snap.docs.map(d=>({id:d.id,...d.data()})); renderAll(); }, ()=>{});
-  }
-  async function loadUsers(){
-    if(!isAdmin()) return;
-    const wrap=$('adminUsersList'); wrap.innerHTML='<div class="muted">Lade Nutzer…</div>';
-    try{
-      const snap = await getDocs(collection(db,'profiles'));
-      const users = snap.docs.map(d=>({id:d.id,...d.data()}));
-      wrap.innerHTML = users.length ? users.map(u=>`<div class="entry-card"><div class="trip-title">${escapeHtml(u.displayName || u.email || 'Unbekannt')}</div><div class="small">${escapeHtml(u.email||'')}</div><div class="small">Paket: ${escapeHtml(u.packageName||'Standard')}</div><div class="small">Aktiv bis: ${escapeHtml(u.activeUntil||'-')}</div></div>`).join('') : '<div class="muted">Keine Nutzer vorhanden.</div>';
-    }catch(e){ wrap.innerHTML='<div class="muted">Nutzer konnten nicht geladen werden.</div>'; }
-  }
-  window.loadUsers = loadUsers;
-  function renderSyncState(text, cls='info'){ $('syncStatus').style.display='block'; $('syncStatus').className='status '+cls; $('syncStatus').textContent=text; }
-  onAuthStateChanged(auth, async (user)=>{
-    currentUser = user || null;
-    if(currentUser){
-      updateBadges();
-      renderSyncState('Synchronisation aktiv.','ok');
-      $('loginCard').classList.add('hidden');
-      $('adminPanel').classList.toggle('hidden', !isAdmin());
-      await loadProfile();
-      updateBadges(); updateProfileUi();
-      subscribeAll();
-      if(isAdmin()) loadUsers();
-    }else{
-      $('loginCard').classList.remove('hidden');
-      $('adminPanel').classList.add('hidden');
-      trips=[]; hotels=[]; fuels=[]; kms=[];
-      profile = { displayName:'', packageName:'Standard', activeUntil:'', company:'', vehicle:'', plate:'', referralCode:'' };
-      updateBadges(); updateProfileUi(); renderAll();
-      renderSyncState('Nicht synchronisiert. Bitte anmelden.','warn');
-    }
-  });
-  $('monthSelect').addEventListener('change', renderAll);
-  $('sortTrips').addEventListener('change', renderTrips);
-  $('sortHotels').addEventListener('change', renderHotels);
-  $('sortFuel').addEventListener('change', renderFuels);
-  $('startTime').addEventListener('input', updatePreview);
-  $('endTime').addEventListener('input', updatePreview);
-  $('hotelCheckin').addEventListener('input', calcHotelNights);
-  $('hotelCheckout').addEventListener('input', calcHotelNights);
-  $('fuelDate').value = formatLocalDate(new Date());
-  $('kmDate').value = formatLocalDate(new Date());
-  renderAll(); updateProfileUi(); updateBadges();
 
   function downloadFile(content, filename, type) {
     const blob = new Blob([content], { type });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = filename; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   }
-  window.exportCSV = function(){
+
+  function selectedMonth() {
+    return monthSelect.value;
+  }
+
+  function getNextTripNumber() {
+    if (!trips.length) return 1;
+    return Math.max(...trips.map(t => Number(t.tripNumber) || 0)) + 1;
+  }
+
+  function toSortableTimestamp(dateTimeString) {
+    const d = parseLocalDateTime(dateTimeString);
+    return d ? d.getTime() : 0;
+  }
+
+  function getTripsSortedByStartTimeAsc(sourceTrips = []) {
+    return [...sourceTrips].sort((a, b) => {
+      return toSortableTimestamp(a.startTime) - toSortableTimestamp(b.startTime);
+    });
+  }
+
+  function getSortedMonthlyTrips(sourceTrips = []) {
     const month = selectedMonth();
-    const monthlyTrips = getSortedByOrder(trips.filter(t=>formatMonthKey(t.startTime)===month),'startTime',$('sortTrips').value).map((trip,index)=>({...trip,displayNumber:index+1}));
-    const monthlyTotal = monthlyTrips.reduce((s,t)=>s + Number(t.allowance||0),0);
-    const rows = [['Nr.','Tour','Losgefahren','Angekommen','Dauer','Spesensatz','Spesen'], ...monthlyTrips.map(trip=>[trip.displayNumber, trip.tourName, formatGermanDate(trip.startTime), formatGermanDate(trip.endTime), formatDuration(Number(trip.hours||0)), trip.allowanceType, formatEuro(trip.allowance||0)]), ['','','','','','Monatssumme', formatEuro(monthlyTotal)]];
-    const csvContent = rows.map(row => row.map(cell => `"${String(cell).replaceAll('"', '""')}"`).join(';')).join('\n');
-    downloadFile(csvContent, `spesen-${month || 'monat'}.csv`, 'text/csv;charset=utf-8;');
+    if (!month) return [];
+
+    return getTripsSortedByStartTimeAsc(
+      sourceTrips.filter(t => formatMonthKey(t.startTime) === month)
+    );
+  }
+
+  function getNumberedMonthlyTrips(sourceTrips = []) {
+    return getSortedMonthlyTrips(sourceTrips).map((trip, index) => ({
+      ...trip,
+      displayNumber: index + 1
+    }));
+  }
+
+  // [1600] Formular
+  window.setNow = function setNow(id) {
+    const now = formatDateTimeLocal(new Date());
+    document.getElementById(id).value = now;
+    localStorage.setItem(id, now);
+    updatePreview();
   };
-  window.exportPDF = function(){
+
+  window.clearForm = function clearForm() {
+    document.getElementById("tourName").value = "";
+    document.getElementById("startTime").value = "";
+    document.getElementById("endTime").value = "";
+    localStorage.removeItem("tourName");
+    localStorage.removeItem("startTime");
+    localStorage.removeItem("endTime");
+    updatePreview();
+  };
+
+  function updatePreview() {
+    const start = document.getElementById("startTime").value;
+    const end = document.getElementById("endTime").value;
+    const hours = (start && end) ? calculateDurationHours(start, end) : 0;
+    const allowance = calculateAllowance(hours);
+
+    document.getElementById("durationPreview").textContent = formatDuration(hours);
+    document.getElementById("allowancePreview").textContent = allowance.toFixed(2) + " €";
+  }
+
+  // [1700] Speichern / Bearbeiten / Löschen
+  window.saveTrip = async function saveTrip() {
+    if (!currentUser || !db) return alert("Bitte zuerst anmelden.");
+
+    const tourName = (document.getElementById("tourName").value || "").trim() || "Ohne Bezeichnung";
+    const start = document.getElementById("startTime").value;
+    const end = document.getElementById("endTime").value;
+
+    if (!start || !end) return alert("Bitte Start und Ende eintragen.");
+
+    const hours = calculateDurationHours(start, end);
+    if (hours <= 0) return alert("Ende muss nach dem Start liegen.");
+
+    const allowance = calculateAllowance(hours);
+
+    await addDoc(collection(db, "users", currentUser.uid, "trips"), {
+      tripNumber: getNextTripNumber(),
+      tourName,
+      startTime: start,
+      endTime: end,
+      hours,
+      allowance,
+      allowanceType: getAllowanceType(allowance),
+      createdAt: serverTimestamp()
+    });
+
+    monthSelect.value = formatMonthKey(start);
+    clearForm();
+  };
+
+  window.editTrip = async function editTrip(id) {
+    if (!currentUser || !db) return;
+
+    const trip = trips.find(t => t.id === id);
+    if (!trip) return;
+
+    const newTour = prompt("Tour / Bemerkung", trip.tourName);
+    if (newTour === null) return;
+
+    const newStart = prompt("Losgefahren (YYYY-MM-DDTHH:MM)", trip.startTime);
+    if (newStart === null) return;
+
+    const newEnd = prompt("Angekommen (YYYY-MM-DDTHH:MM)", trip.endTime);
+    if (newEnd === null) return;
+
+    const hours = calculateDurationHours(newStart, newEnd);
+    if (hours <= 0) return alert("Ende muss nach dem Start liegen.");
+
+    const allowance = calculateAllowance(hours);
+
+    await updateDoc(doc(db, "users", currentUser.uid, "trips", id), {
+      tourName: newTour.trim() || "Ohne Bezeichnung",
+      startTime: newStart,
+      endTime: newEnd,
+      hours,
+      allowance,
+      allowanceType: getAllowanceType(allowance)
+    });
+  };
+
+  window.deleteTrip = async function deleteTrip(id) {
+    if (!currentUser || !db) return;
+    if (!confirm("Diese Fahrt wirklich löschen?")) return;
+    await deleteDoc(doc(db, "users", currentUser.uid, "trips", id));
+  };
+
+  // [1800] Monatsauswahl
+  function renderMonthSelect() {
+    const current = monthSelect.value;
+    const options = [...new Set(trips.map(t => formatMonthKey(t.startTime)).filter(Boolean))]
+      .sort((a, b) => b.localeCompare(a));
+
+    if (!options.length) {
+      monthSelect.innerHTML = '<option value="">Keine Monate vorhanden</option>';
+      return;
+    }
+
+    monthSelect.innerHTML = options.map(m => `<option value="${m}">${formatMonthLabel(m)}</option>`).join("");
+    monthSelect.value = options.includes(current) ? current : options[0];
+  }
+
+  // [1900] Anzeige
+  function render() {
+    renderMonthSelect();
+
+    const monthlyTrips = getNumberedMonthlyTrips(trips);
+    const monthlyTotal = monthlyTrips.reduce((s, t) => s + Number(t.allowance || 0), 0);
+    const monthlyHours = monthlyTrips.reduce((s, t) => s + Number(t.hours || 0), 0);
+    const overallTotal = trips.reduce((s, t) => s + Number(t.allowance || 0), 0);
+
+    document.getElementById("monthlyTotal").textContent = monthlyTotal.toFixed(2) + " €";
+    document.getElementById("monthlyHours").textContent = formatDuration(monthlyHours);
+    document.getElementById("overallTotal").textContent = overallTotal.toFixed(2) + " €";
+
+    const list = document.getElementById("tripList");
+
+    if (!monthlyTrips.length) {
+      list.innerHTML = '<div class="muted">Keine Fahrten in diesem Monat gespeichert.</div>';
+      return;
+    }
+
+    list.innerHTML = monthlyTrips.map(trip => `
+      <div class="trip">
+        <div>
+          <div class="trip-title">Nr. ${trip.displayNumber} – ${escapeHtml(trip.tourName)}</div>
+          <div class="small">${formatGermanDate(trip.startTime)} → ${formatGermanDate(trip.endTime)}</div>
+          <div class="small">Dauer: ${formatDuration(Number(trip.hours || 0))}</div>
+          <div class="small">Spesensatz: ${escapeHtml(trip.allowanceType || "")}</div>
+          <div class="small">Spesen: ${Number(trip.allowance || 0).toFixed(2)} €</div>
+        </div>
+        <div class="toolbar" style="margin-top:0;">
+          <button type="button" class="outline" onclick="editTrip('${trip.id}')">Bearbeiten</button>
+          <button type="button" class="danger" onclick="deleteTrip('${trip.id}')">Löschen</button>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  function escapeHtml(text) {
+    return String(text).replace(/[&<>"']/g, m => ({
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      '"':'&quot;',
+      "'":'&#39;'
+    }[m]));
+  }
+
+  // [2000] Export CSV
+  window.exportCSV = function exportCSV() {
     const month = selectedMonth();
-    const monthlyTrips = getSortedByOrder(trips.filter(t=>formatMonthKey(t.startTime)===month),'startTime',$('sortTrips').value).map((trip,index)=>({...trip,displayNumber:index+1}));
-    const monthlyTotal = monthlyTrips.reduce((s,t)=>s + Number(t.allowance||0),0);
-    const monthlyHours = monthlyTrips.reduce((s,t)=>s + Number(t.hours||0),0);
-    const rowsHtml = monthlyTrips.map(trip=>`<tr><td>${trip.displayNumber}</td><td>${escapeHtml(trip.tourName)}</td><td>${formatGermanDate(trip.startTime)}</td><td>${formatGermanDate(trip.endTime)}</td><td>${formatDuration(Number(trip.hours||0))}</td><td>${escapeHtml(trip.allowanceType||'')}</td><td>${formatEuro(trip.allowance||0)}</td></tr>`).join('');
-    const profileExtras = ['Premium','Goldmitglied'].includes(profile.packageName) ? `<tr><td><strong>Firma</strong></td><td>${escapeHtml(profile.company||'-')}</td><td><strong>Fahrzeug</strong></td><td>${escapeHtml(profile.vehicle||'-')}</td></tr><tr><td><strong>Kennzeichen</strong></td><td>${escapeHtml(profile.plate||'-')}</td><td><strong>Name</strong></td><td>${escapeHtml(profile.displayName||currentUser?.email||'-')}</td></tr>` : `<tr><td><strong>Name</strong></td><td>${escapeHtml(profile.displayName||currentUser?.email||'-')}</td><td><strong>E-Mail</strong></td><td>${escapeHtml(currentUser?.email||'-')}</td></tr>`;
-    const html = `<html><head><title>Spesen ${month}</title><style>body { font-family: Arial, sans-serif; padding: 24px; color: #111; } h1 { margin-bottom: 6px; } h2 { margin: 0 0 20px 0; font-size: 16px; font-weight: normal; } .header-box { border: 2px solid #111; padding: 14px; margin-bottom: 18px; } .meta-grid { width: 100%; border-collapse: collapse; margin-top: 12px; } .meta-grid td { border: 1px solid #111; padding: 8px; } table { width: 100%; border-collapse: collapse; margin-top: 16px; } th, td { border: 1px solid #111; padding: 8px; text-align: left; font-size: 13px; } th { background: #e5e7eb; } .sum-box { margin-top: 18px; border: 2px solid #111; padding: 12px; font-size: 16px; font-weight: bold; }</style></head><body><div class='header-box'><h1>Monatsabrechnung Spesen</h1><h2>${formatMonthLabel(month)}</h2><table class='meta-grid'>${profileExtras}<tr><td><strong>Anzahl Fahrten</strong></td><td>${monthlyTrips.length}</td><td><strong>Gesamtstunden</strong></td><td>${formatDuration(monthlyHours)}</td></tr></table></div><table><thead><tr><th>Nr.</th><th>Tour</th><th>Losgefahren</th><th>Angekommen</th><th>Dauer</th><th>Spesensatz</th><th>Spesen</th></tr></thead><tbody>${rowsHtml || '<tr><td colspan="7">Keine Fahrten in diesem Monat.</td></tr>'}</tbody></table><div class='sum-box'>Monatssumme Spesen: ${formatEuro(monthlyTotal)}</div></body></html>`;
-    const w = window.open('', '_blank'); if(!w) return alert('Pop-up blockiert.'); w.document.open(); w.document.write(html); w.document.close(); w.focus(); w.print();
+    const monthlyTrips = getNumberedMonthlyTrips(trips);
+    const monthlyTotal = monthlyTrips.reduce((s, t) => s + Number(t.allowance || 0), 0);
+
+    const rows = [
+      ["Nr.", "Tour", "Losgefahren", "Angekommen", "Dauer", "Spesensatz", "Spesen"],
+      ...monthlyTrips.map(trip => [
+        trip.displayNumber,
+        trip.tourName,
+        formatGermanDate(trip.startTime),
+        formatGermanDate(trip.endTime),
+        formatDuration(Number(trip.hours || 0)),
+        trip.allowanceType,
+        `${Number(trip.allowance || 0).toFixed(2)} €`
+      ]),
+      ["", "", "", "", "", "Monatssumme", `${monthlyTotal.toFixed(2)} €`]
+    ];
+
+    const csvContent = rows
+      .map(row => row.map(cell => `"${String(cell).replaceAll('"', '""')}"`).join(";"))
+      .join("\n");
+
+    downloadFile(csvContent, `spesen-${month || 'monat'}.csv`, "text/csv;charset=utf-8;");
   };
+
+  // [2100] Export PDF
+  window.exportPDF = function exportPDF() {
+    const month = selectedMonth();
+    const monthlyTrips = getNumberedMonthlyTrips(trips);
+    const monthlyTotal = monthlyTrips.reduce((s, t) => s + Number(t.allowance || 0), 0);
+    const monthlyHours = monthlyTrips.reduce((s, t) => s + Number(t.hours || 0), 0);
+
+    const rowsHtml = monthlyTrips.map(trip => `
+      <tr>
+        <td>${trip.displayNumber}</td>
+        <td>${escapeHtml(trip.tourName)}</td>
+        <td>${formatGermanDate(trip.startTime)}</td>
+        <td>${formatGermanDate(trip.endTime)}</td>
+        <td>${formatDuration(Number(trip.hours || 0))}</td>
+        <td>${escapeHtml(trip.allowanceType || "")}</td>
+        <td>${Number(trip.allowance || 0).toFixed(2)} €</td>
+      </tr>
+    `).join("");
+
+    const html = `
+      <html>
+        <head>
+          <title>Spesen ${month}</title>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 24px; color: #111; }
+            h1 { margin-bottom: 6px; }
+            h2 { margin: 0 0 20px 0; font-size: 16px; font-weight: normal; }
+            .header-box { border: 2px solid #111; padding: 14px; margin-bottom: 18px; }
+            .meta-grid { width: 100%; border-collapse: collapse; margin-top: 12px; }
+            .meta-grid td { border: 1px solid #111; padding: 8px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+            th, td { border: 1px solid #111; padding: 8px; text-align: left; font-size: 13px; }
+            th { background: #e5e7eb; }
+            .sum-box { margin-top: 18px; border: 2px solid #111; padding: 12px; font-size: 16px; font-weight: bold; }
+            .footer-note { margin-top: 20px; font-size: 12px; color: #444; }
+          </style>
+        </head>
+        <body>
+          <div class="header-box">
+            <h1>Monatsabrechnung Spesen</h1>
+            <h2>${formatMonthLabel(month)}</h2>
+            <table class="meta-grid">
+              <tr>
+                <td><strong>Monat</strong></td>
+                <td>${formatMonthLabel(month)}</td>
+                <td><strong>Anzahl Fahrten</strong></td>
+                <td>${monthlyTrips.length}</td>
+              </tr>
+              <tr>
+                <td><strong>Gesamtstunden</strong></td>
+                <td>${formatDuration(monthlyHours)}</td>
+                <td><strong>Monatssumme</strong></td>
+                <td>${monthlyTotal.toFixed(2)} €</td>
+              </tr>
+            </table>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Nr.</th>
+                <th>Tour</th>
+                <th>Losgefahren</th>
+                <th>Angekommen</th>
+                <th>Dauer</th>
+                <th>Spesensatz</th>
+                <th>Spesen</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml || '<tr><td colspan="7">Keine Fahrten in diesem Monat.</td></tr>'}
+            </tbody>
+          </table>
+
+          <div class="sum-box">Monatssumme Spesen: ${monthlyTotal.toFixed(2)} €</div>
+          <div class="footer-note">Erstellt mit der Spesen-App für Micha.</div>
+        </body>
+      </html>
+    `;
+
+    const w = window.open("", "_blank");
+    if (!w) return alert("Pop-up blockiert. Bitte Pop-ups erlauben.");
+    w.document.open();
+    w.document.write(html);
+    w.document.close();
+    w.focus();
+    w.print();
+  };
+
+  // [2200] Events
+  monthSelect.addEventListener("change", render);
+  document.getElementById("startTime").addEventListener("input", updatePreview);
+  document.getElementById("endTime").addEventListener("input", updatePreview);
+
+  ["tourName", "startTime", "endTime"].forEach(id => {
+    document.getElementById(id).addEventListener("input", (e) => {
+      localStorage.setItem(id, e.target.value);
+    });
+  });
+
+  ["tourName", "startTime", "endTime"].forEach(id => {
+    const value = localStorage.getItem(id);
+    if (value) {
+      document.getElementById(id).value = value;
+    }
+  });
+
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => navigator.serviceWorker.register("./service-worker.js").catch(() => {}));
+  }
+
+  // [2300] Start
+  renderSavedEmailsDropdown();
+  render();
+  updatePreview();
 </script>
 </body>
 </html>
